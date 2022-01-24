@@ -14,28 +14,35 @@ namespace CampusCrawl.Characters
 {
     internal class Character : GameObject
     {
+        private BoxColliderComponent collider;
+        private SpriteComponent sprite;
+        private float speed = 100;
         public Character()
         {
-            Components.Add(new BoxColliderComponent
+            collider = new BoxColliderComponent()
             {
-                Size = new Vector2(32,32),
-                Location = new Vector2(0,0)
-            });
-            Components.Add(new SpriteComponent
+                Size = new Vector2(32, 32),
+                Location = new Vector2(0, 0)
+            };
+            Components.Add(collider);
+            sprite = new SpriteComponent()
             {
                 Texture = AssetManager.AttemptLoad<Texture2D>(1215427970),
                 Position = new Vector2(0, 0),
-                Scale = new Vector2(1,1)
-            });
+                Scale = new Vector2(1, 1)
+            };
+            Components.Add(sprite);
             TileEngine.Instance.KeyboardInput.AddAxisBinding(Keys.D, Keys.A, Keys.S, Keys.W, "Movement");
-
         }
+
+    
 
         public override void Update(GameTime delta)
         {
             base.Update(delta);
+            var time = (float)(delta.ElapsedGameTime.TotalSeconds);
             var movement = InputHandler.GetEvent("Movement");
-            this.Position = new Vector2(Position.X + movement.Value.X , Position.Y + movement.Value.Y );
+            this.Position = new Vector2(Position.X + (movement.Value.X*time*this.speed), Position.Y + (movement.Value.Y*time*this.speed));
             
             //...
         }
