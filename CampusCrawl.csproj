@@ -19,10 +19,28 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MonoGame.Framework">
+      <HintPath>tileEngine\bin\Debug\MonoGame.Framework.dll</HintPath>
+    </Reference>
     <Reference Include="System, Version=4.0.0.0" />
     <Reference Include="System.Core, Version=4.0.0.0" />
+    <Reference Include="tileEngine.SDK">
+      <HintPath>tileEngine\bin\Debug\tileEngine.SDK.dll</HintPath>
+    </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Characters\Character.cs" />
+    <Compile Include="Game.cs" />
+    <Compile Include="Scenes\AlexandraSquare.cs" />
+    <Compile Include="Scenes\LibraryFloorOne.cs" />
+    <Compile Include="Scenes\LibraryFloorTwo.cs" />
+    <Compile Include="Scenes\LibraryFloorThree.cs" />
+    <Compile Include="Scenes\SouthSpine.cs" />
+    <Compile Include="Scenes\Spar.cs" />
+    <Compile Include="Scenes\SportsCentreGym.cs" />
+    <Compile Include="Scenes\SportsCentrePitch.cs" />
+    <Compile Include="Scenes\SportsCentrePool.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
