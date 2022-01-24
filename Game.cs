@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,16 +12,14 @@ using CampusCrawl.Characters;
 namespace CampusCrawl
 {
    public class Game : TileEngineGame
-    {
+   {
         public override void Initialize()
         {
-            TileEngine.Instance.SetScene(typeof(AlexandraSquare));
-
             var mainPlayer = new Character();
-            // TODO: TileEngine.Instance.GetScene().AddObject(mainPlayer);
-            // TODO: Latch onto scene change event to call that ^
+            TileEngine.Instance.SetScene(typeof(AlexandraSquare));
+            TileEngine.Instance.GetScene().AddObject(mainPlayer);
+            mainPlayer.SetLayer("Objects");
         }
-
         public override void Shutdown()
         {
             //...
