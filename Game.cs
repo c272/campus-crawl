@@ -16,8 +16,11 @@ namespace CampusCrawl
         public override void Initialize()
         {
             var mainPlayer = new Character();
+            var enemy = new Enemy();
             TileEngine.Instance.SetScene(typeof(AlexandraSquare));
             TileEngine.Instance.GetScene().AddObject(mainPlayer);
+            TileEngine.Instance.GetScene().AddObject(enemy);
+            enemy.SetLayer("Objects");
             mainPlayer.SetLayer("Objects");
         }
         public override void Shutdown()
