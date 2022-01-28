@@ -22,9 +22,15 @@ namespace CampusCrawl.Characters
         private float direction = -1;
         private float patrolDistance = 5;
         private float currentDistance = 0;
-        
-        public Enemy()
+        private string directionName;
+        public Enemy(string directionName,float distance)
         {
+            if (directionName == "up" ||  directionName == "left")
+                this.direction = -1;
+            if (directionName == "down" || directionName == "right")
+                this.direction = 1;
+            this.directionName = directionName;
+            this.patrolDistance = distance;
             collider = new BoxColliderComponent()
             {
                 Size = new Vector2(gridSize, gridSize),
@@ -51,11 +57,20 @@ namespace CampusCrawl.Characters
             return 1;
         }
 
+        private Vector2 newPosition(float time)
+        {
+            if (this.directionName == "left" || this.directionName == "right")
+            {
+                return new Vector2(Position.X + (this.direction * time * this.speed), Position.Y + (0 * time * this.speed));
+            }
+            return new Vector2(Position.X + (0 * time * this.speed), Position.Y + (this.direction * time * this.speed));
+        }
+
         public override void Update(GameTime delta)
         {
             base.Update(delta);
             var time = (float)(delta.ElapsedGameTime.TotalSeconds);
-            var newPos = new Vector2(Position.X + (this.direction * time * this.speed), Position.Y + (0 * time * this.speed));
+            var newPos = newPosition(time);
             if (this.Scene.GridToTileLocation(newPos) != this.Scene.GridToTileLocation(this.Position))
             {
                 this.currentDistance++;
@@ -70,8 +85,7 @@ namespace CampusCrawl.Characters
                 direction = -direction;
                 currentDistance = 0;
             }
-            this.Position = new Vector2(Position.X + (this.direction * time * this.speed), Position.Y + (0 * time * this.speed));
-            
+            this.Position = newPosition(time);
         }
     }
 }
