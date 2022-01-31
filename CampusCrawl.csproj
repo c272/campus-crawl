@@ -17,16 +17,19 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DefineConstants>
+    </DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MonoGame.Framework">
-      <HintPath>tileEngine\bin\Debug\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\..\cSHARP\tileEngine\bin\Debug\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System, Version=4.0.0.0" />
     <Reference Include="System.Core, Version=4.0.0.0" />
-    <Reference Include="tileEngine.SDK">
-      <HintPath>tileEngine\bin\Debug\tileEngine.SDK.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Characters\Character.cs" />
@@ -41,6 +44,12 @@
     <Compile Include="Scenes\SportsCentreGym.cs" />
     <Compile Include="Scenes\SportsCentrePitch.cs" />
     <Compile Include="Scenes\SportsCentrePool.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="tileEngine\SDK\tileEngine.SDK\tileEngine.SDK.csproj">
+      <Project>{583f16b9-5498-4a17-9f35-50abd06e7273}</Project>
+      <Name>tileEngine.SDK</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
