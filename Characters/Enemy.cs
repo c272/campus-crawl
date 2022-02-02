@@ -26,7 +26,10 @@ namespace CampusCrawl.Characters
         private Dictionary<Point, node> map;
         private List<node> openNodes;
         private List<node> closedNodes;
+        private List<node> completedPath;
         private int state = 0;
+        private int followingPath = 0;
+
 
         public struct node
         {
@@ -67,7 +70,7 @@ namespace CampusCrawl.Characters
             this.patrolDistance = distance;
             collider = new BoxColliderComponent()
             {
-                Size = new Vector2(gridSize, gridSize),
+                Size = new Vector2(gridSize-1, gridSize-1),
                 Location = new Vector2(0, 0)
             };
             Components.Add(collider);
@@ -187,8 +190,8 @@ namespace CampusCrawl.Characters
                 smallestNode = findSmallestNode();
                 if (smallestNode.Target != 1)
                 {
+                    smallestNode.Path.Add(smallestNode);
                     List<node> path = new List<node>(smallestNode.Path);
-                    path.Add(smallestNode);
                     var relativeLocation = new Point(smallestNode.RelativeLocation.X +1, smallestNode.RelativeLocation.Y);
                     if (checkPosition(relativeLocation) == 1)
                     {
@@ -377,6 +380,7 @@ namespace CampusCrawl.Characters
                 openNodes.Remove(smallestNode);
                 closedNodes.Add(smallestNode);
             }
+            smallestNode.Path.Add(map[destination]);
             return smallestNode;
         }
 
@@ -390,6 +394,7 @@ namespace CampusCrawl.Characters
             closedNodes = new List<node> { };
             openNodes.Add(map[currentTile]);
             node test = findPath(destination);
+            completedPath = new List<node>(test.Path);
             for(int x=0; x<test.Path.Count;x++)
             {
                 DiagnosticsHook.DebugMessage($"({test.Path[x].RelativeLocation.X}, {test.Path[x].RelativeLocation.Y})");
@@ -416,35 +421,80 @@ namespace CampusCrawl.Characters
             base.Update(delta);
             var time = (float)(delta.ElapsedGameTime.TotalSeconds);
             var newPos = newPosition(time);
-            if (playerInView() == 0)
+            if (followingPath == 0)
             {
-                if (this.Scene.GridToTileLocation(newPos) != this.Scene.GridToTileLocation(this.Position))
+                if (playerInView() == 0)
                 {
-                    this.currentDistance++;
-                    if (checkPosition(this.Scene.GridToTileLocation(newPos)) == 0)
+                    if (this.Scene.GridToTileLocation(newPos) != this.Scene.GridToTileLocation(this.Position))
                     {
-                        this.direction = -this.direction;
-                        this.currentDistance = 0;
+                        this.currentDistance++;
+                        if (checkPosition(this.Scene.GridToTileLocation(newPos)) == 0)
+                        {
+                            this.direction = -this.direction;
+                            this.currentDistance = 0;
+                        }
                     }
+                    if (currentDistance == patrolDistance)
+                    {
+                        direction = -direction;
+                        currentDistance = 0;
+                    }
+                    this.Position = newPosition(time);
                 }
-                if (currentDistance == patrolDistance)
+                else
                 {
-                    direction = -direction;
-                    currentDistance = 0;
+                    if (state == 0)
+                    {
+                        var player = this.Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
+                        var playerTile = this.Scene.GridToTileLocation(player.Position);
+                        var enemyTile = this.Scene.GridToTileLocation(this.Position);
+                        newPath(playerTile, enemyTile);
+                        state = 1;
+                        followingPath = 1;
+                    }
+
                 }
-                this.Position = newPosition(time);
             }
             else
             {
-                if (state == 0)
+                Point current = this.Scene.GridToTileLocation(this.Position);
+                Point target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
+                int xValue = 0;
+                int yValue = 0;
+                if (current.Equals(target))
                 {
-                    var player = this.Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
-                    var playerTile = this.Scene.GridToTileLocation(player.Position);
-                    var enemyTile = this.Scene.GridToTileLocation(this.Position);
-                    newPath(playerTile, enemyTile);
-                    state = 1;
+                    if(completedPath.Count == 1)
+                    {
+                        followingPath = 0;
+                    }
+                    else
+                    {
+                        completedPath.RemoveAt(0);
+                        target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
+                    }
                 }
-
+                if (followingPath == 1)
+                {
+                    if (current.X > target.X)
+                    {
+                        xValue = -1;
+                    }
+                    if (current.X < target.X)
+                    {
+                        xValue = 1;
+                    }
+                    if (current.Y > target.Y)
+                    {
+                        yValue = -1;
+                    }
+                    if (current.Y < target.Y)
+                    {
+                        yValue = 1;
+                    }
+                    //DiagnosticsHook.DebugMessage($"({xValue}, {yValue})");
+                    Position = new Vector2(Position.X + (xValue * time * this.speed), Position.Y + (yValue * time * this.speed));
+                }
+                //followingPath = 0;
             }
         }
     }

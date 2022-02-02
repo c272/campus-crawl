@@ -20,6 +20,7 @@ namespace CampusCrawl
             TileEngine.Instance.SetScene(typeof(AlexandraSquare));
             TileEngine.Instance.GetScene().AddObject(mainPlayer);
             TileEngine.Instance.GetScene().AddObject(enemy);
+            TileEngine.Instance.GetScene().CameraPosition = new Vector2(-320, -320);
             enemy.SetLayer("Objects");
             mainPlayer.SetLayer("Objects");
         }
