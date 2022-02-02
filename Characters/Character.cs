@@ -16,7 +16,7 @@ namespace CampusCrawl.Characters
     {
         private BoxColliderComponent collider;
         private SpriteComponent sprite;
-        private float speed = 100;
+        private float speed = 110;
         public Character()
         {
             collider = new BoxColliderComponent()

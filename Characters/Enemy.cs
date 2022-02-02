@@ -387,20 +387,30 @@ namespace CampusCrawl.Characters
 
         private void newPath(Point destination, Point currentTile)
         {
-            map = new Dictionary<Point, node>();
-
-            map.Add(destination ,new node(1000,0,1,destination,new List<node> {}));
-            map.Add(currentTile,new node(0,calculateLength(currentTile,destination),0,currentTile,new List<node> {}));
-            openNodes = new List<node> { };
-            closedNodes = new List<node> { };
-            openNodes.Add(map[currentTile]);
-            node test = findPath(destination);
-            completedPath = new List<node>(test.Path);
-            for(int x=0; x<test.Path.Count;x++)
+            if (!destination.Equals(currentTile))
             {
-                DiagnosticsHook.DebugMessage($"({test.Path[x].RelativeLocation.X}, {test.Path[x].RelativeLocation.Y})");
+                map = new Dictionary<Point, node>();
+
+                map.Add(destination, new node(1000, 0, 1, destination, new List<node> { }));
+                map.Add(currentTile, new node(0, calculateLength(currentTile, destination), 0, currentTile, new List<node> { }));
+                openNodes = new List<node> { };
+                closedNodes = new List<node> { };
+                openNodes.Add(map[currentTile]);
+                node test = findPath(destination);
+                completedPath = new List<node>(test.Path);
+                for (int x = 0; x < test.Path.Count; x++)
+                {
+                    DiagnosticsHook.DebugMessage($"({test.Path[x].RelativeLocation.X}, {test.Path[x].RelativeLocation.Y})");
+                }
+                timePath = DateTime.UtcNow - new DateTime(1, 1, 1);
             }
-            timePath = DateTime.UtcNow - new DateTime(1,1,1);
+            else
+            {
+                var path = new node(1000, 0, 1, destination, new List<node> { });
+                path.Path.Add(path);
+                completedPath = new List<node>(path.Path);
+                timePath = DateTime.UtcNow - new DateTime(1, 1, 1);
+            }
         }
 
 
