@@ -21,7 +21,7 @@ namespace CampusCrawl.Characters
         {
             collider = new BoxColliderComponent()
             {
-                Size = new Vector2(32, 32),
+                Size = new Vector2(31, 31),
                 Location = new Vector2(0, 0)
             };
             Components.Add(collider);

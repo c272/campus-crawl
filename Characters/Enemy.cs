@@ -27,6 +27,7 @@ namespace CampusCrawl.Characters
         private List<node> openNodes;
         private List<node> closedNodes;
         private List<node> completedPath;
+        private TimeSpan timePath;
         private int state = 0;
         private int followingPath = 0;
 
@@ -399,6 +400,7 @@ namespace CampusCrawl.Characters
             {
                 DiagnosticsHook.DebugMessage($"({test.Path[x].RelativeLocation.X}, {test.Path[x].RelativeLocation.Y})");
             }
+            timePath = DateTime.UtcNow - new DateTime(1,1,1);
         }
 
 
@@ -443,20 +445,23 @@ namespace CampusCrawl.Characters
                 }
                 else
                 {
-                    if (state == 0)
-                    {
-                        var player = this.Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
-                        var playerTile = this.Scene.GridToTileLocation(player.Position);
-                        var enemyTile = this.Scene.GridToTileLocation(this.Position);
-                        newPath(playerTile, enemyTile);
-                        state = 1;
-                        followingPath = 1;
-                    }
-
+                    var player = this.Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
+                    var playerTile = this.Scene.GridToTileLocation(player.Position);
+                    var enemyTile = this.Scene.GridToTileLocation(this.Position);
+                    newPath(playerTile, enemyTile);
+                    followingPath = 1;
                 }
             }
             else
             {
+                TimeSpan currentTime = DateTime.UtcNow - new DateTime(1, 1, 1);
+                if (currentTime.TotalSeconds - timePath.TotalSeconds > 1)
+                {
+                    var player = this.Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
+                    var playerTile = this.Scene.GridToTileLocation(player.Position);
+                    var enemyTile = this.Scene.GridToTileLocation(this.Position);
+                    newPath(playerTile, enemyTile);
+                }
                 Point current = this.Scene.GridToTileLocation(this.Position);
                 Point target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
                 int xValue = 0;
