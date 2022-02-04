@@ -13,7 +13,7 @@ using tileEngine.SDK.Input;
 
 namespace CampusCrawl.Characters
 {
-    internal class Enemy : GameObject
+    public class Enemy : Character
     {
         private BoxColliderComponent collider;
         private SpriteComponent sprite;
