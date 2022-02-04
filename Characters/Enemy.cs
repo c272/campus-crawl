@@ -74,14 +74,14 @@ namespace CampusCrawl.Characters
                 Size = new Vector2(gridSize-1, gridSize-1),
                 Location = new Vector2(0, 0)
             };
-            Components.Add(collider);
+            AddComponent(collider);
             sprite = new SpriteComponent()
             {
                 Texture = AssetManager.AttemptLoad<Texture2D>(-1280955819),
                 Position = new Vector2(0, 0),
                 Scale = new Vector2(1, 1)
             };
-            Components.Add(sprite);
+            AddComponent(sprite);
             this.Position = new Vector2(320, 0);
         }
 

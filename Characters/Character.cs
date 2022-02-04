@@ -24,14 +24,14 @@ namespace CampusCrawl.Characters
                 Size = new Vector2(31, 31),
                 Location = new Vector2(0, 0)
             };
-            Components.Add(collider);
+            AddComponent(collider);
             sprite = new SpriteComponent()
             {
                 Texture = AssetManager.AttemptLoad<Texture2D>(1215427970),
                 Position = new Vector2(0, 0),
                 Scale = new Vector2(1, 1)
             };
-            Components.Add(sprite);
+            AddComponent(sprite);
             TileEngine.Instance.KeyboardInput.AddAxisBinding(Keys.D, Keys.A, Keys.S, Keys.W, "Movement");
         }
 
