@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="Characters\Character.cs" />
     <Compile Include="Characters\Enemy.cs" />
+    <Compile Include="Characters\Player.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Scenes\AlexandraSquare.cs" />
     <Compile Include="Scenes\LibraryFloorOne.cs" />

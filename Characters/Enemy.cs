@@ -18,24 +18,22 @@ namespace CampusCrawl.Characters
     {
         private BoxColliderComponent collider;
         private SpriteComponent sprite;
-        private float gridSize = 32;
         private float speed = 100;
         private float direction = -1;
         private float patrolDistance = 5;
         private float currentDistance = 0;
         private string directionName;
-        private Dictionary<Point, node> map;
-        private List<node> openNodes;
-        private List<node> closedNodes;
-        private List<node> completedPath;
-        private TimeSpan timePath;
+        private Dictionary<Point, Node> map;
+        private List<Node> openNodes;
+        private List<Node> closedNodes;
+        private List<Node> completedPath;
         private int followingPath = 0;
         private Timer timerPath;
 
 
-        public struct node
+        public struct Node
         {
-            public node(int distanceFromStart, int distanceFromEnd, int target, Point relativeLocation,List<node> path)
+            public Node(int distanceFromStart, int distanceFromEnd, int target, Point relativeLocation, List<Node> path)
             {
                 DistanceFromStart = distanceFromStart;
                 DistanceFromEnd = distanceFromEnd;
@@ -45,7 +43,7 @@ namespace CampusCrawl.Characters
                 RelativeLocation = relativeLocation;
             }
 
-            public void newStartDistance(int distanceFromStart, List<node> path)
+            public void newStartDistance(int distanceFromStart, List<Node> path)
             {
                 DistanceFromStart = distanceFromStart;
                 OverallCost = DistanceFromStart + DistanceFromEnd;
@@ -54,7 +52,7 @@ namespace CampusCrawl.Characters
             public int DistanceFromStart { get; set; }
             public int DistanceFromEnd { get; }
             public int OverallCost { get; set; }
-            public List<node> Path { get; set; }
+            public List<Node> Path { get; set; }
             public int Target { get; }
             public Point RelativeLocation { get; }
         }
@@ -70,12 +68,7 @@ namespace CampusCrawl.Characters
                 this.direction = 1;
             this.directionName = directionName;
             this.patrolDistance = distance;
-            collider = new BoxColliderComponent()
-            {
-                Size = new Vector2(gridSize-1, gridSize-1),
-                Location = new Vector2(0, 0)
-            };
-            AddComponent(collider);
+            this.Position = new Vector2(320, 0);
             sprite = new SpriteComponent()
             {
                 Texture = AssetManager.AttemptLoad<Texture2D>(-1280955819),
@@ -83,21 +76,31 @@ namespace CampusCrawl.Characters
                 Scale = new Vector2(1, 1)
             };
             AddComponent(sprite);
-            this.Position = new Vector2(320, 0);
-            timerPath = new Timer((float)0.5);
+            timerPath = new Timer(0.5f);
             timerPath.OnTick += pathCreation;
             timerPath.Loop = true;
+        }
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            collider = new BoxColliderComponent()
+            {
+                Size = new Vector2(Scene.Map.TileTextureSize - 1, Scene.Map.TileTextureSize - 1),
+                Location = new Vector2(0, 0)
+            };
+            AddComponent(collider);
         }
         /*
          * Checks if a tile has collision at set point
          */
-        private int checkPosition(Point point)
+        private Boolean checkPosition(Point point)
         {
             if (this.Scene.Map.Layers.Where(x => x.ID == this.Layer).FirstOrDefault().CollisionHull.ContainsKey(point))
             {
-                return 0;
+                return false;
             }
-            return 1;
+            return true;
         }
 
         private Vector2 newPosition(float time)
@@ -154,10 +157,10 @@ namespace CampusCrawl.Characters
         /*
          * finds the node in open nodes with the smallest OverallCost
          */
-        private node findSmallestNode()
+        private Node findSmallestNode()
         {
             int cheapest = 0;
-            node cheap = new node();
+            Node cheap = new Node();
             for(int x =0;x< openNodes.Count;x++)
             {
                 if (openNodes[x].OverallCost < cheapest || cheapest == 0)
@@ -168,8 +171,10 @@ namespace CampusCrawl.Characters
             }
             return cheap;
         }
-
-        private int addMapping(Point relativeLocation, int value, List<node> path, node smallestNode)
+        /*
+         * checks if this is the new fastest way to the node and then returns if the node is the target node
+         */
+        private Boolean targetLocation(Point relativeLocation, int value, List<Node> path, Node smallestNode)
         {
             if (map[relativeLocation].DistanceFromStart > smallestNode.DistanceFromStart + value)
             {
@@ -177,57 +182,57 @@ namespace CampusCrawl.Characters
             }
             if (map[relativeLocation].Target == 1)
             {
-                return 1;
+                return true;
             }
-            return 0;
+            return false;
         }
 
-        private int checkNode(Point relativeLocation,node smallestNode,Point destination,List<node> path,int value)
+        private Boolean checkNode(Point relativeLocation,Node smallestNode,Point destination,List<Node> path,int value)
         {
-            if (checkPosition(relativeLocation) == 1)
+            if (checkPosition(relativeLocation))
             {
-                if (map.ContainsKey(relativeLocation) == false)
+                if (!map.ContainsKey(relativeLocation))
                 {
                     if (!closedNodes.Contains(smallestNode))
                     {
-                        map.Add(relativeLocation, (new node(smallestNode.DistanceFromStart + value, calculateLength(destination, relativeLocation), 0, relativeLocation, path)));
+                        map.Add(relativeLocation, (new Node(smallestNode.DistanceFromStart + value, calculateLength(destination, relativeLocation), 0, relativeLocation, path)));
                         openNodes.Add(map[relativeLocation]);
                     }
                 }
                 else
                 {
-                    if (addMapping(relativeLocation, value, path, smallestNode) == 1) return 1;
+                    if (targetLocation(relativeLocation, value, path, smallestNode)) return true;
                 }
             }
-            return 0;
+            return false;
         }
 
-        private node findPath(Point destination)
+        private Node findPath(Point destination)
         {
-            node smallestNode = new node();
+            Node smallestNode = new Node();
             while (true)
             {
                 smallestNode = findSmallestNode();
                 if (smallestNode.Target != 1)
                 {
                     smallestNode.Path.Add(smallestNode);
-                    List<node> path = new List<node>(smallestNode.Path);
+                    List<Node> path = new List<Node>(smallestNode.Path);
                     var relativeLocation = new Point(smallestNode.RelativeLocation.X +1, smallestNode.RelativeLocation.Y);
-                    if (checkNode(relativeLocation, smallestNode, destination, path, 10) == 1) break;
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 10)) break;
                     relativeLocation = new Point(smallestNode.RelativeLocation.X -1 , smallestNode.RelativeLocation.Y );
-                    if (checkNode(relativeLocation, smallestNode, destination, path, 10) == 1) break;
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 10)) break;
                     relativeLocation = new Point(smallestNode.RelativeLocation.X, smallestNode.RelativeLocation.Y + 1);
-                    if (checkNode(relativeLocation, smallestNode, destination, path, 10) == 1) break;
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 10)) break;
                     relativeLocation = new Point(smallestNode.RelativeLocation.X, smallestNode.RelativeLocation.Y - 1);
-                    if (checkNode(relativeLocation, smallestNode, destination, path, 10) == 1) break;
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 10)) break;
                     relativeLocation = new Point(smallestNode.RelativeLocation.X + 1, smallestNode.RelativeLocation.Y + 1);
-                    if (checkNode(relativeLocation, smallestNode, destination, path, 14) == 1) break;
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 14)) break;
                     relativeLocation = new Point(smallestNode.RelativeLocation.X -1 , smallestNode.RelativeLocation.Y - 1);
-                    if (checkNode(relativeLocation, smallestNode, destination, path, 14) == 1) break;
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 14)) break;
                     relativeLocation = new Point(smallestNode.RelativeLocation.X + 1, smallestNode.RelativeLocation.Y - 1);
-                    if (checkNode(relativeLocation, smallestNode, destination, path, 14) == 1) break;
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 14)) break;
                     relativeLocation = new Point(smallestNode.RelativeLocation.X - 1, smallestNode.RelativeLocation.Y + 1);
-                    if (checkNode(relativeLocation, smallestNode, destination, path, 14) == 1) break;
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 14)) break;
                 }
                 openNodes.Remove(smallestNode);
                 closedNodes.Add(smallestNode);
@@ -240,37 +245,34 @@ namespace CampusCrawl.Characters
         {
             if (!destination.Equals(currentTile))
             {
-                map = new Dictionary<Point, node>();
+                map = new Dictionary<Point, Node>();
 
-                map.Add(destination, new node(1000, 0, 1, destination, new List<node> { }));
-                map.Add(currentTile, new node(0, calculateLength(currentTile, destination), 0, currentTile, new List<node> { }));
-                openNodes = new List<node> { };
-                closedNodes = new List<node> { };
+                map.Add(destination, new Node(int.MaxValue, 0, 1, destination, new List<Node> { })); //It is assigned max value so that onces its found it will be assigned a path
+                map.Add(currentTile, new Node(0, calculateLength(currentTile, destination), 0, currentTile, new List<Node> { }));
+                openNodes = new List<Node> { };
+                closedNodes = new List<Node> { };
                 openNodes.Add(map[currentTile]);
-                node test = findPath(destination);
-                completedPath = new List<node>(test.Path);
-                timePath = DateTime.UtcNow - new DateTime(1, 1, 1);
+                Node target = findPath(destination);
+                completedPath = new List<Node>(target.Path);
             }
             else
             {
-                var path = new node(1000, 0, 1, destination, new List<node> { });
+                var path = new Node(1000, 0, 1, destination, new List<Node> { });
                 path.Path.Add(path);
-                completedPath = new List<node>(path.Path);
-                timePath = DateTime.UtcNow - new DateTime(1, 1, 1);
-
+                completedPath = new List<Node>(path.Path);
             }
         }
 
-        private int playerInView()
+        private Boolean playerInView()
         {
             var player = this.Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
             var playerTile = this.Scene.GridToTileLocation(player.Position);
             var currentTile = this.Scene.GridToTileLocation(this.Position);
             if(Math.Abs(playerTile.X - currentTile.X) < 10 && Math.Abs(playerTile.Y - currentTile.Y) < 10)
             {
-                return 1; 
+                return true; 
             }
-            return 0;
+            return false;
         }
 
         private void pathCreation()
@@ -278,7 +280,7 @@ namespace CampusCrawl.Characters
             var player = this.Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
             var playerTile = this.Scene.GridToTileLocation(player.Position);
             var enemyTile = this.Scene.GridToTileLocation(this.Position);
-            if (playerInView() == 1)
+            if (playerInView())
             {
                 newPath(playerTile, enemyTile);
                 followingPath = 1;
@@ -294,12 +296,12 @@ namespace CampusCrawl.Characters
             var newPos = newPosition(time);
             if (followingPath == 0)
             {
-                if (playerInView() == 0)
+                if (!playerInView())
                 {
                     if (this.Scene.GridToTileLocation(newPos) != this.Scene.GridToTileLocation(this.Position))
                     {
                         this.currentDistance++;
-                        if (checkPosition(this.Scene.GridToTileLocation(newPos)) == 0)
+                        if (!checkPosition(this.Scene.GridToTileLocation(newPos)))
                         {
                             this.direction = -this.direction;
                             this.currentDistance = 0;
