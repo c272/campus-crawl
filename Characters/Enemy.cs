@@ -27,7 +27,7 @@ namespace CampusCrawl.Characters
         private List<Node> openNodes;
         private List<Node> closedNodes;
         private List<Node> completedPath;
-        private int followingPath = 0;
+        private Boolean followingPath = false;
         private Timer timerPath;
 
 
@@ -56,9 +56,6 @@ namespace CampusCrawl.Characters
             public int Target { get; }
             public Point RelativeLocation { get; }
         }
-
-
-
 
         public Enemy(string directionName, float distance)
         {
@@ -90,6 +87,7 @@ namespace CampusCrawl.Characters
                 Location = new Vector2(0, 0)
             };
             AddComponent(collider);
+            timerPath.Start();
         }
         /*
          * Checks if a tile has collision at set point
@@ -103,13 +101,13 @@ namespace CampusCrawl.Characters
             return true;
         }
 
-        private Vector2 newPosition(float time)
+        private Vector2 newPosition(float delta)
         {
             if (this.directionName == "left" || this.directionName == "right")
             {
-                return new Vector2(Position.X + (this.direction * time * this.speed), Position.Y + (0 * time * this.speed));
+                return new Vector2(Position.X + (this.direction * delta * this.speed), Position.Y + (0 * delta * this.speed));
             }
-            return new Vector2(Position.X + (0 * time * this.speed), Position.Y + (this.direction * time * this.speed));
+            return new Vector2(Position.X + (0 * delta * this.speed), Position.Y + (this.direction * delta * this.speed));
         }
         /*
          * calculates the relative distance between two points
@@ -283,7 +281,7 @@ namespace CampusCrawl.Characters
             if (playerInView())
             {
                 newPath(playerTile, enemyTile);
-                followingPath = 1;
+                followingPath = true;
             }
         }
 
@@ -291,10 +289,9 @@ namespace CampusCrawl.Characters
         {
             base.Update(delta);
             timerPath.Update(delta);
-            timerPath.Start();
             var time = (float)(delta.ElapsedGameTime.TotalSeconds);
             var newPos = newPosition(time);
-            if (followingPath == 0)
+            if (!followingPath)
             {
                 if (!playerInView())
                 {
@@ -325,7 +322,7 @@ namespace CampusCrawl.Characters
                 {
                     if(completedPath.Count == 1)
                     {
-                        followingPath = 0;
+                        followingPath = false;
                     }
                     else
                     {
@@ -333,7 +330,7 @@ namespace CampusCrawl.Characters
                         target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
                     }
                 }
-                if (followingPath == 1)
+                if (followingPath)
                 {
                     if (current.X > target.X)
                     {
