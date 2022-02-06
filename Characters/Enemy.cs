@@ -10,10 +10,11 @@ using tileEngine.SDK;
 using tileEngine.SDK.Components;
 using tileEngine.SDK.Diagnostics;
 using tileEngine.SDK.Input;
+using tileEngine.SDK.Utility;
 
 namespace CampusCrawl.Characters
 {
-    public class Enemy : Character
+    public class Enemy : GameObject
     {
         private BoxColliderComponent collider;
         private SpriteComponent sprite;
@@ -28,8 +29,8 @@ namespace CampusCrawl.Characters
         private List<node> closedNodes;
         private List<node> completedPath;
         private TimeSpan timePath;
-        private int state = 0;
         private int followingPath = 0;
+        private Timer timerPath;
 
 
         public struct node
@@ -83,8 +84,13 @@ namespace CampusCrawl.Characters
             };
             AddComponent(sprite);
             this.Position = new Vector2(320, 0);
+            timerPath = new Timer((float)0.5);
+            timerPath.OnTick += pathCreation;
+            timerPath.Loop = true;
         }
-
+        /*
+         * Checks if a tile has collision at set point
+         */
         private int checkPosition(Point point)
         {
             if (this.Scene.Map.Layers.Where(x => x.ID == this.Layer).FirstOrDefault().CollisionHull.ContainsKey(point))
@@ -102,72 +108,52 @@ namespace CampusCrawl.Characters
             }
             return new Vector2(Position.X + (0 * time * this.speed), Position.Y + (this.direction * time * this.speed));
         }
-
-        private int funCalc(int value)
+        /*
+         * calculates the relative distance between two points
+         */
+        private int calculateLength(Point destination, Point start)
         {
-            while (true)
-            {
-                if (value < 0)
-                    value += 10;
-                else
-                    break;
-            }
-            while(true)
-            {
-                if (value > 10)
-                    value -= 10;
-                else
-                    break;
-            }
-            return value;
-        }
-        private int calculateLength(Point destinationPoint, Point startPoint)
-        {
-            var destination = new int[2];
-            destination[0] = destinationPoint.Y;
-            destination[1] = destinationPoint.X;
-            var start = new int[2];
-            start[0] = startPoint.Y;
-            start[1] = startPoint.X;
             var total = 0;
-            while (start[0] != destination[0] || start[1] != destination[1])
+            while (start.X != destination.X || start.Y != destination.Y)
             {
-                if (start[0] < destination[0] && start[1] < destination[1])
+                if (start.X < destination.X && start.Y < destination.Y)
                 {
                     total += 14;
-                    start[0] += 1;
-                    start[1] += 1;
+                    start.X += 1;
+                    start.Y += 1;
                 }
-                else if (start[0] > destination[0] && start[1] > destination[1])
+                else if (start.X > destination.X && start.Y > destination.Y)
                 {
                     total += 14;
-                    start[0] -= 1;
-                    start[1] -= 1;
+                    start.X -= 1;
+                    start.Y -= 1;
                 }
-                else if (start[0] < destination[0])
+                else if (start.X < destination.X)
                 {
-                    start[0] += 1;
+                    start.X += 1;
                     total += 10;
                 }
-                else if (start[0] > destination[0])
+                else if (start.X > destination.X)
                 {
-                    start[0] -= 1;
+                    start.X -= 1;
                     total += 10;
                 }
-                else if (start[1] < destination[1])
+                else if (start.Y < destination.Y)
                 {
-                    start[1] += 1;
+                    start.Y += 1;
                     total += 10;
                 }
-                else if (start[1] > destination[1])
+                else if (start.Y > destination.Y)
                 {
-                    start[1] -= 1;
+                    start.Y -= 1;
                     total += 10;
                 }
             }
             return total;
         }
-
+        /*
+         * finds the node in open nodes with the smallest OverallCost
+         */
         private node findSmallestNode()
         {
             int cheapest = 0;
@@ -183,6 +169,39 @@ namespace CampusCrawl.Characters
             return cheap;
         }
 
+        private int addMapping(Point relativeLocation, int value, List<node> path, node smallestNode)
+        {
+            if (map[relativeLocation].DistanceFromStart > smallestNode.DistanceFromStart + value)
+            {
+                map[relativeLocation].newStartDistance(smallestNode.DistanceFromStart + value, path);
+            }
+            if (map[relativeLocation].Target == 1)
+            {
+                return 1;
+            }
+            return 0;
+        }
+
+        private int checkNode(Point relativeLocation,node smallestNode,Point destination,List<node> path,int value)
+        {
+            if (checkPosition(relativeLocation) == 1)
+            {
+                if (map.ContainsKey(relativeLocation) == false)
+                {
+                    if (!closedNodes.Contains(smallestNode))
+                    {
+                        map.Add(relativeLocation, (new node(smallestNode.DistanceFromStart + value, calculateLength(destination, relativeLocation), 0, relativeLocation, path)));
+                        openNodes.Add(map[relativeLocation]);
+                    }
+                }
+                else
+                {
+                    if (addMapping(relativeLocation, value, path, smallestNode) == 1) return 1;
+                }
+            }
+            return 0;
+        }
+
         private node findPath(Point destination)
         {
             node smallestNode = new node();
@@ -194,189 +213,21 @@ namespace CampusCrawl.Characters
                     smallestNode.Path.Add(smallestNode);
                     List<node> path = new List<node>(smallestNode.Path);
                     var relativeLocation = new Point(smallestNode.RelativeLocation.X +1, smallestNode.RelativeLocation.Y);
-                    if (checkPosition(relativeLocation) == 1)
-                    {
-                        if (map.ContainsKey(relativeLocation) == false)
-                        {
-                            if (!closedNodes.Contains(smallestNode))
-                            {
-                                map.Add(relativeLocation, (new node(smallestNode.DistanceFromStart + 10, calculateLength(destination, relativeLocation), 0, relativeLocation, path)));
-                                openNodes.Add(map[relativeLocation]);
-                            }
-                        }
-                        else
-                        {
-                            if (map[relativeLocation].DistanceFromStart > smallestNode.DistanceFromStart + 10)
-                            {
-                                map[relativeLocation].newStartDistance(smallestNode.DistanceFromStart + 10,path);
-                            }
-                            if (map[relativeLocation].Target == 1)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 10) == 1) break;
                     relativeLocation = new Point(smallestNode.RelativeLocation.X -1 , smallestNode.RelativeLocation.Y );
-                    if (checkPosition(relativeLocation) == 1)
-                    {
-                        if (map.ContainsKey(relativeLocation) == false)
-                        {
-                            if (!closedNodes.Contains(smallestNode))
-                            {
-                                map.Add(relativeLocation, (new node(smallestNode.DistanceFromStart + 10, calculateLength(destination, relativeLocation), 0, relativeLocation, path)));
-                                openNodes.Add(map[relativeLocation]);
-                            }
-                        }
-                        else
-                        {
-                            if (map[relativeLocation].DistanceFromStart > smallestNode.DistanceFromStart + 10)
-                            {
-                                map[relativeLocation].newStartDistance(smallestNode.DistanceFromStart + 10, path);
-                            }
-                            if (map[relativeLocation].Target == 1)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 10) == 1) break;
                     relativeLocation = new Point(smallestNode.RelativeLocation.X, smallestNode.RelativeLocation.Y + 1);
-                    if (checkPosition(relativeLocation) == 1)
-                    {
-                        if (map.ContainsKey(relativeLocation) == false)
-                        {
-                            if (!closedNodes.Contains(smallestNode))
-                            {
-                                map.Add(relativeLocation, (new node(smallestNode.DistanceFromStart + 10, calculateLength(destination, relativeLocation), 0, relativeLocation, path)));
-                                openNodes.Add(map[relativeLocation]);
-                            }
-                        }
-                        else
-                        {
-                            if (map[relativeLocation].DistanceFromStart > smallestNode.DistanceFromStart + 10)
-                            {
-                                map[relativeLocation].newStartDistance(smallestNode.DistanceFromStart + 10, path);
-                            }
-                            if (map[relativeLocation].Target == 1)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 10) == 1) break;
                     relativeLocation = new Point(smallestNode.RelativeLocation.X, smallestNode.RelativeLocation.Y - 1);
-                    if (checkPosition(relativeLocation) == 1)
-                    {
-                        if (map.ContainsKey(relativeLocation) == false)
-                        {
-                            if (!closedNodes.Contains(smallestNode))
-                            {
-                                map.Add(relativeLocation, (new node(smallestNode.DistanceFromStart + 10, calculateLength(destination, relativeLocation), 0, relativeLocation, path)));
-                                openNodes.Add(map[relativeLocation]);
-                            }
-                        }
-                        else
-                        {
-                            if (map[relativeLocation].DistanceFromStart > smallestNode.DistanceFromStart + 10)
-                            {
-                                map[relativeLocation].newStartDistance(smallestNode.DistanceFromStart + 10, path);
-                            }
-                            if (map[relativeLocation].Target == 1)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 10) == 1) break;
                     relativeLocation = new Point(smallestNode.RelativeLocation.X + 1, smallestNode.RelativeLocation.Y + 1);
-                    if (checkPosition(relativeLocation) == 1)
-                    {
-                        if (map.ContainsKey(relativeLocation) == false)
-                        {
-                            if (!closedNodes.Contains(smallestNode))
-                            {
-                                map.Add(relativeLocation, (new node(smallestNode.DistanceFromStart + 14, calculateLength(destination, relativeLocation), 0, relativeLocation, path)));
-                                openNodes.Add(map[relativeLocation]);
-                            }
-                        }
-                        else
-                        {
-                            if (map[relativeLocation].DistanceFromStart > smallestNode.DistanceFromStart + 14)
-                            {
-                                map[relativeLocation].newStartDistance(smallestNode.DistanceFromStart + 14, path);
-                            }
-                            if (map[relativeLocation].Target == 1)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 14) == 1) break;
                     relativeLocation = new Point(smallestNode.RelativeLocation.X -1 , smallestNode.RelativeLocation.Y - 1);
-                    if (checkPosition(relativeLocation) == 1)
-                    {
-                        if (map.ContainsKey(relativeLocation) == false)
-                        {
-                            if (!closedNodes.Contains(smallestNode))
-                            {
-                                map.Add(relativeLocation, (new node(smallestNode.DistanceFromStart + 14, calculateLength(destination, relativeLocation), 0, relativeLocation, path)));
-                                openNodes.Add(map[relativeLocation]);
-                            }
-                        }
-                        else
-                        {
-                            if (map[relativeLocation].DistanceFromStart > smallestNode.DistanceFromStart + 14)
-                            {
-                                map[relativeLocation].newStartDistance(smallestNode.DistanceFromStart + 14, path);
-                            }
-                            if (map[relativeLocation].Target == 1)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 14) == 1) break;
                     relativeLocation = new Point(smallestNode.RelativeLocation.X + 1, smallestNode.RelativeLocation.Y - 1);
-                    if (checkPosition(relativeLocation) == 1)
-                    {
-                        if (map.ContainsKey(relativeLocation) == false)
-                        {
-                            if (!closedNodes.Contains(smallestNode))
-                            {
-                                map.Add(relativeLocation, (new node(smallestNode.DistanceFromStart + 14, calculateLength(destination, relativeLocation), 0, relativeLocation, path)));
-                                openNodes.Add(map[relativeLocation]);
-                            }
-                        }
-                        else
-                        {
-                            if (map[relativeLocation].DistanceFromStart > smallestNode.DistanceFromStart + 14)
-                            {
-                                map[relativeLocation].newStartDistance(smallestNode.DistanceFromStart + 14, path);
-                            }
-                            if (map[relativeLocation].Target == 1)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 14) == 1) break;
                     relativeLocation = new Point(smallestNode.RelativeLocation.X - 1, smallestNode.RelativeLocation.Y + 1);
-                    if (checkPosition(relativeLocation) == 1)
-                    {
-                        if (map.ContainsKey(relativeLocation) == false)
-                        {
-                            if (!closedNodes.Contains(smallestNode))
-                            {
-                                map.Add(relativeLocation, (new node(smallestNode.DistanceFromStart + 14, calculateLength(destination, relativeLocation), 0, relativeLocation, path)));
-                                openNodes.Add(map[relativeLocation]);
-                            }
-                        }
-                        else
-                        {
-                            if (map[relativeLocation].DistanceFromStart > smallestNode.DistanceFromStart + 14)
-                            {
-                                map[relativeLocation].newStartDistance(smallestNode.DistanceFromStart + 14, path);
-                            }
-                            if (map[relativeLocation].Target == 1)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    if (checkNode(relativeLocation, smallestNode, destination, path, 14) == 1) break;
                 }
                 openNodes.Remove(smallestNode);
                 closedNodes.Add(smallestNode);
@@ -398,10 +249,6 @@ namespace CampusCrawl.Characters
                 openNodes.Add(map[currentTile]);
                 node test = findPath(destination);
                 completedPath = new List<node>(test.Path);
-                for (int x = 0; x < test.Path.Count; x++)
-                {
-                    DiagnosticsHook.DebugMessage($"({test.Path[x].RelativeLocation.X}, {test.Path[x].RelativeLocation.Y})");
-                }
                 timePath = DateTime.UtcNow - new DateTime(1, 1, 1);
             }
             else
@@ -410,11 +257,9 @@ namespace CampusCrawl.Characters
                 path.Path.Add(path);
                 completedPath = new List<node>(path.Path);
                 timePath = DateTime.UtcNow - new DateTime(1, 1, 1);
+
             }
         }
-
-
-       
 
         private int playerInView()
         {
@@ -428,9 +273,23 @@ namespace CampusCrawl.Characters
             return 0;
         }
 
+        private void pathCreation()
+        {
+            var player = this.Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
+            var playerTile = this.Scene.GridToTileLocation(player.Position);
+            var enemyTile = this.Scene.GridToTileLocation(this.Position);
+            if (playerInView() == 1)
+            {
+                newPath(playerTile, enemyTile);
+                followingPath = 1;
+            }
+        }
+
         public override void Update(GameTime delta)
         {
             base.Update(delta);
+            timerPath.Update(delta);
+            timerPath.Start();
             var time = (float)(delta.ElapsedGameTime.TotalSeconds);
             var newPos = newPosition(time);
             if (followingPath == 0)
@@ -453,25 +312,9 @@ namespace CampusCrawl.Characters
                     }
                     this.Position = newPosition(time);
                 }
-                else
-                {
-                    var player = this.Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
-                    var playerTile = this.Scene.GridToTileLocation(player.Position);
-                    var enemyTile = this.Scene.GridToTileLocation(this.Position);
-                    newPath(playerTile, enemyTile);
-                    followingPath = 1;
-                }
             }
             else
             {
-                TimeSpan currentTime = DateTime.UtcNow - new DateTime(1, 1, 1);
-                if (currentTime.TotalSeconds - timePath.TotalSeconds > 1)
-                {
-                    var player = this.Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
-                    var playerTile = this.Scene.GridToTileLocation(player.Position);
-                    var enemyTile = this.Scene.GridToTileLocation(this.Position);
-                    newPath(playerTile, enemyTile);
-                }
                 Point current = this.Scene.GridToTileLocation(this.Position);
                 Point target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
                 int xValue = 0;
@@ -506,10 +349,8 @@ namespace CampusCrawl.Characters
                     {
                         yValue = 1;
                     }
-                    //DiagnosticsHook.DebugMessage($"({xValue}, {yValue})");
                     Position = new Vector2(Position.X + (xValue * time * this.speed), Position.Y + (yValue * time * this.speed));
                 }
-                //followingPath = 0;
             }
         }
     }
