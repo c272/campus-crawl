@@ -17,19 +17,27 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DefineConstants>
+    </DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MonoGame.Framework">
-      <HintPath>tileEngine\bin\Debug\MonoGame.Framework.dll</HintPath>
+      <HintPath>tileEngine\SDK\tileEngine.SDK\bin\Debug\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System, Version=4.0.0.0" />
     <Reference Include="System.Core, Version=4.0.0.0" />
     <Reference Include="tileEngine.SDK">
-      <HintPath>tileEngine\bin\Debug\tileEngine.SDK.dll</HintPath>
+      <HintPath>tileEngine\SDK\tileEngine.SDK\bin\Debug\tileEngine.SDK.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Characters\Character.cs" />
+    <Compile Include="Characters\Enemy.cs" />
+    <Compile Include="Characters\Player.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Scenes\AlexandraSquare.cs" />
     <Compile Include="Scenes\LibraryFloorOne.cs" />

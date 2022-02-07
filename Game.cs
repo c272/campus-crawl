@@ -15,9 +15,16 @@ namespace CampusCrawl
    {
         public override void Initialize()
         {
+            //Create movement bindings.
+            TileEngine.Instance.KeyboardInput.AddAxisBinding(Keys.D, Keys.A, Keys.S, Keys.W, "Movement");
+
             var mainPlayer = new Character();
+            var enemy = new Enemy("left",5);
             TileEngine.Instance.SetScene(typeof(AlexandraSquare));
             TileEngine.Instance.GetScene().AddObject(mainPlayer);
+            TileEngine.Instance.GetScene().AddObject(enemy);
+            TileEngine.Instance.GetScene().CameraPosition = new Vector2(-320, -320);
+            enemy.SetLayer("Objects");
             mainPlayer.SetLayer("Objects");
         }
         public override void Shutdown()

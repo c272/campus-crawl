@@ -8,16 +8,17 @@ using System.Text;
 using System.Threading.Tasks;
 using tileEngine.SDK;
 using tileEngine.SDK.Components;
+using tileEngine.SDK.Diagnostics;
 using tileEngine.SDK.Input;
 
 namespace CampusCrawl.Characters
 {
-    public class Character : GameObject
+    public class Player : Character
     {
         private BoxColliderComponent collider;
         private SpriteComponent sprite;
         private float speed = 110;
-        public Character()
+        public Player()
         {
             collider = new BoxColliderComponent()
             {
@@ -32,19 +33,19 @@ namespace CampusCrawl.Characters
                 Scale = new Vector2(1, 1)
             };
             AddComponent(sprite);
-            TileEngine.Instance.KeyboardInput.AddAxisBinding(Keys.D, Keys.A, Keys.S, Keys.W, "Movement");
         }
 
-    
+
 
         public override void Update(GameTime delta)
         {
             base.Update(delta);
             var time = (float)(delta.ElapsedGameTime.TotalSeconds);
             var movement = InputHandler.GetEvent("Movement");
-            Position = new Vector2(Position.X + (movement.Value.X*time*speed), Position.Y + (movement.Value.Y*time*speed));
-            
+            Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
+
             //...
         }
     }
+
 }
