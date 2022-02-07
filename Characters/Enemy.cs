@@ -27,7 +27,7 @@ namespace CampusCrawl.Characters
         private List<Node> openNodes;
         private List<Node> closedNodes;
         private List<Node> completedPath;
-        private Boolean followingPath = false;
+        private bool followingPath = false;
         private Timer timerPath;
 
 
@@ -60,12 +60,12 @@ namespace CampusCrawl.Characters
         public Enemy(string directionName, float distance)
         {
             if (directionName == "up" || directionName == "left")
-                this.direction = -1;
+                direction = -1;
             if (directionName == "down" || directionName == "right")
-                this.direction = 1;
+                direction = 1;
             this.directionName = directionName;
-            this.patrolDistance = distance;
-            this.Position = new Vector2(320, 0);
+            patrolDistance = distance;
+            Position = new Vector2(320, 0);
             sprite = new SpriteComponent()
             {
                 Texture = AssetManager.AttemptLoad<Texture2D>(-1280955819),
@@ -74,7 +74,7 @@ namespace CampusCrawl.Characters
             };
             AddComponent(sprite);
             timerPath = new Timer(0.5f);
-            timerPath.OnTick += pathCreation;
+            timerPath.OnTick += createPath;
             timerPath.Loop = true;
         }
 
@@ -92,9 +92,9 @@ namespace CampusCrawl.Characters
         /*
          * Checks if a tile has collision at set point
          */
-        private Boolean checkPosition(Point point)
+        private bool checkPosition(Point point)
         {
-            if (this.Scene.Map.Layers.Where(x => x.ID == this.Layer).FirstOrDefault().CollisionHull.ContainsKey(point))
+            if (Scene.Map.Layers.Where(x => x.ID == Layer).FirstOrDefault().CollisionHull.ContainsKey(point))
             {
                 return false;
             }
@@ -103,11 +103,11 @@ namespace CampusCrawl.Characters
 
         private Vector2 newPosition(float delta)
         {
-            if (this.directionName == "left" || this.directionName == "right")
+            if (directionName == "left" || directionName == "right")
             {
-                return new Vector2(Position.X + (this.direction * delta * this.speed), Position.Y + (0 * delta * this.speed));
+                return new Vector2(Position.X + (direction * delta * speed), Position.Y + (0 * delta * speed));
             }
-            return new Vector2(Position.X + (0 * delta * this.speed), Position.Y + (this.direction * delta * this.speed));
+            return new Vector2(Position.X + (0 * delta * speed), Position.Y + (direction * delta * speed));
         }
         /*
          * calculates the relative distance between two points
@@ -172,7 +172,7 @@ namespace CampusCrawl.Characters
         /*
          * checks if this is the new fastest way to the node and then returns if the node is the target node
          */
-        private Boolean targetLocation(Point relativeLocation, int value, List<Node> path, Node smallestNode)
+        private bool targetLocation(Point relativeLocation, int value, List<Node> path, Node smallestNode)
         {
             if (map[relativeLocation].DistanceFromStart > smallestNode.DistanceFromStart + value)
             {
@@ -185,7 +185,7 @@ namespace CampusCrawl.Characters
             return false;
         }
 
-        private Boolean checkNode(Point relativeLocation,Node smallestNode,Point destination,List<Node> path,int value)
+        private bool checkNode(Point relativeLocation,Node smallestNode,Point destination,List<Node> path,int value)
         {
             if (checkPosition(relativeLocation))
             {
@@ -262,11 +262,11 @@ namespace CampusCrawl.Characters
             }
         }
 
-        private Boolean playerInView()
+        private bool playerInView()
         {
-            var player = this.Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
-            var playerTile = this.Scene.GridToTileLocation(player.Position);
-            var currentTile = this.Scene.GridToTileLocation(this.Position);
+            var player = Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
+            var playerTile = Scene.GridToTileLocation(player.Position);
+            var currentTile = Scene.GridToTileLocation(Position);
             if(Math.Abs(playerTile.X - currentTile.X) < 10 && Math.Abs(playerTile.Y - currentTile.Y) < 10)
             {
                 return true; 
@@ -274,11 +274,11 @@ namespace CampusCrawl.Characters
             return false;
         }
 
-        private void pathCreation()
+        private void createPath()
         {
-            var player = this.Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
-            var playerTile = this.Scene.GridToTileLocation(player.Position);
-            var enemyTile = this.Scene.GridToTileLocation(this.Position);
+            var player = Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
+            var playerTile = Scene.GridToTileLocation(player.Position);
+            var enemyTile = Scene.GridToTileLocation(Position);
             if (playerInView())
             {
                 newPath(playerTile, enemyTile);
@@ -296,13 +296,13 @@ namespace CampusCrawl.Characters
             {
                 if (!playerInView())
                 {
-                    if (this.Scene.GridToTileLocation(newPos) != this.Scene.GridToTileLocation(this.Position))
+                    if (Scene.GridToTileLocation(newPos) != Scene.GridToTileLocation(Position))
                     {
-                        this.currentDistance++;
-                        if (!checkPosition(this.Scene.GridToTileLocation(newPos)))
+                        currentDistance++;
+                        if (!checkPosition(Scene.GridToTileLocation(newPos)))
                         {
-                            this.direction = -this.direction;
-                            this.currentDistance = 0;
+                            direction = -direction;
+                            currentDistance = 0;
                         }
                     }
                     if (currentDistance == patrolDistance)
@@ -310,12 +310,12 @@ namespace CampusCrawl.Characters
                         direction = -direction;
                         currentDistance = 0;
                     }
-                    this.Position = newPosition(time);
+                    Position = newPosition(time);
                 }
             }
             else
             {
-                Point current = this.Scene.GridToTileLocation(this.Position);
+                Point current = Scene.GridToTileLocation(Position);
                 Point target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
                 int xValue = 0;
                 int yValue = 0;
@@ -334,22 +334,14 @@ namespace CampusCrawl.Characters
                 if (followingPath)
                 {
                     if (current.X > target.X)
-                    {
                         xValue = -1;
-                    }
                     if (current.X < target.X)
-                    {
                         xValue = 1;
-                    }
                     if (current.Y > target.Y)
-                    {
                         yValue = -1;
-                    }
                     if (current.Y < target.Y)
-                    {
                         yValue = 1;
-                    }
-                    Position = new Vector2(Position.X + (xValue * time * this.speed), Position.Y + (yValue * time * this.speed));
+                    Position = new Vector2(Position.X + (xValue * time * speed), Position.Y + (yValue * time * speed));
                 }
             }
         }

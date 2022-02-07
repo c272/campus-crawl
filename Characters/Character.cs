@@ -42,7 +42,7 @@ namespace CampusCrawl.Characters
             base.Update(delta);
             var time = (float)(delta.ElapsedGameTime.TotalSeconds);
             var movement = InputHandler.GetEvent("Movement");
-            this.Position = new Vector2(Position.X + (movement.Value.X*time*this.speed), Position.Y + (movement.Value.Y*time*this.speed));
+            Position = new Vector2(Position.X + (movement.Value.X*time*speed), Position.Y + (movement.Value.Y*time*speed));
             
             //...
         }
