@@ -233,6 +233,7 @@ namespace CampusCrawl.Characters
                     if (checkNode(relativeLocation, smallestNode, destination, path, 14)) break;
                 }
                 openNodes.Remove(smallestNode);
+                if (openNodes.Count == 0 || closedNodes.Count >= 1000) break;
                 closedNodes.Add(smallestNode);
             }
             smallestNode.Path.Add(map[destination]);
