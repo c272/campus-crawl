@@ -18,7 +18,7 @@ namespace CampusCrawl
             //Create movement bindings.
             TileEngine.Instance.KeyboardInput.AddAxisBinding(Keys.D, Keys.A, Keys.S, Keys.W, "Movement");
 
-            var mainPlayer = new Character();
+            var mainPlayer = new Player();
             var enemy = new Enemy("left",5);
             TileEngine.Instance.SetScene(typeof(AlexandraSquare));
             TileEngine.Instance.GetScene().AddObject(mainPlayer);

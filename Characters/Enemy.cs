@@ -14,7 +14,7 @@ using tileEngine.SDK.Utility;
 
 namespace CampusCrawl.Characters
 {
-    public class Enemy : GameObject
+    public class Enemy : Character
     {
         private BoxColliderComponent collider;
         private SpriteComponent sprite;
