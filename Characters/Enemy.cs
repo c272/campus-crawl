@@ -16,9 +16,6 @@ namespace CampusCrawl.Characters
 {
     public class Enemy : Character
     {
-        private BoxColliderComponent collider;
-        private SpriteComponent sprite;
-        private float speed = 100;
         private float direction = -1;
         private float patrolDistance = 5;
         private float currentDistance = 0;
@@ -82,6 +79,8 @@ namespace CampusCrawl.Characters
             timerPath = new Timer(0.5f);
             timerPath.OnTick += createPath;
             timerPath.Loop = true;
+            speed = 100;
+            health = 100;
         }
 
         public override void Initialize()

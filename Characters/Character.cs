@@ -14,15 +14,27 @@ namespace CampusCrawl.Characters
 {
     public class Character : GameObject
     {
-        private BoxColliderComponent collider;
-        private SpriteComponent sprite;
-        private float speed = 110;
+        protected BoxColliderComponent collider;
+        protected SpriteComponent sprite;
+        protected float speed;
+        protected float health;
+        protected float xKnockBack = 0;
+        protected float yKnockBack = 0;
+        protected bool knockBacked = false;
+        protected float knockBackDistance = 0;
         public Character()
         {
 
         }
 
-    
+        public void onDamage(float damage, float x, float y)
+        {
+            health -= damage;
+            xKnockBack = x;
+            yKnockBack = y;
+            knockBacked = true;
+            knockBackDistance = 33;
+        }
 
         public override void Update(GameTime delta)
         {

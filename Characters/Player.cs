@@ -15,15 +15,8 @@ namespace CampusCrawl.Characters
 {
     public class Player : Character
     {
-        private BoxColliderComponent collider;
-        private SpriteComponent sprite;
-        private float speed = 110;
-        private float health = 100;
-        private float xKnockBack = 0;
-        private float yKnockBack = 0;
-        private bool knockBacked = false;
-        private float knockBackDistance = 0;
         private Point spawnPoint = new Point();
+
         public Player()
         {
             sprite = new SpriteComponent()
@@ -33,7 +26,10 @@ namespace CampusCrawl.Characters
                 Scale = new Vector2(1, 1)
             };
             AddComponent(sprite);
+            speed = 110;
+            health = 100;
         }
+
         public override void Initialize()
         {
             base.Initialize();
@@ -45,14 +41,7 @@ namespace CampusCrawl.Characters
             spawnPoint = new Point(0,0);
             AddComponent(collider);
         }
-        public void onDamage(float damage,float x, float y)
-        {
-            health -= damage;
-            xKnockBack = x;
-            yKnockBack = y;
-            knockBacked = true;
-            knockBackDistance = 33;
-        }
+
 
         public void respawn()
         {
