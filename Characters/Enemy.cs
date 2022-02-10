@@ -29,6 +29,9 @@ namespace CampusCrawl.Characters
         private List<Node> completedPath;
         private bool followingPath = false;
         private Timer timerPath;
+        private Timer attackCooldown;
+        private Player player;
+        private float damage = 10;
 
 
         public struct Node
@@ -73,6 +76,9 @@ namespace CampusCrawl.Characters
                 Scale = new Vector2(1, 1)
             };
             AddComponent(sprite);
+            attackCooldown = new Timer(0.5f);
+            attackCooldown.OnTick += attack;
+            attackCooldown.Loop = true;
             timerPath = new Timer(0.5f);
             timerPath.OnTick += createPath;
             timerPath.Loop = true;
@@ -88,6 +94,7 @@ namespace CampusCrawl.Characters
             };
             AddComponent(collider);
             timerPath.Start();
+            attackCooldown.Start();
         }
         /*
          * Checks if a tile has collision at set point
@@ -262,12 +269,11 @@ namespace CampusCrawl.Characters
             }
         }
 
-        private bool playerInView()
+        private bool playerInView(int distance)
         {
-            var player = Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
             var playerTile = Scene.GridToTileLocation(player.Position);
             var currentTile = Scene.GridToTileLocation(Position);
-            if(Math.Abs(playerTile.X - currentTile.X) < 10 && Math.Abs(playerTile.Y - currentTile.Y) < 10)
+            if(Math.Abs(playerTile.X - currentTile.X) < distance && Math.Abs(playerTile.Y - currentTile.Y) < distance)
             {
                 return true; 
             }
@@ -276,25 +282,62 @@ namespace CampusCrawl.Characters
 
         private void createPath()
         {
-            var player = Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
             var playerTile = Scene.GridToTileLocation(player.Position);
             var enemyTile = Scene.GridToTileLocation(Position);
-            if (playerInView())
+            if (playerInView(10))
             {
                 newPath(playerTile, enemyTile);
                 followingPath = true;
             }
         }
 
+        private float[] knockBackDirection()
+        {
+            var direction = new float[2] {0,0};
+            var playerTile = Scene.GridToTileLocation(player.Position);
+            var currentTile = Scene.GridToTileLocation(Position);
+            if(playerTile.X - currentTile.X > 0)
+            {
+                direction[0] = 2.5f;
+            }
+            if (playerTile.X - currentTile.X < 0)
+            {
+                direction[0] = -2.5f;
+            }
+            if (playerTile.Y - currentTile.Y > 0)
+            {
+                direction[1] = 2.5f;
+            }
+            if (playerTile.Y - currentTile.Y < 0)
+            {
+                direction[1] = -2.5f;
+            }
+            return direction;
+        }
+        private void attack()
+        {
+            if (playerInView(2))
+            {
+                var distance = knockBackDirection();
+                player.onDamage(damage,distance[0],distance[1]);
+                
+            }
+        }
+
         public override void Update(GameTime delta)
         {
             base.Update(delta);
+            if(player == null)
+            {
+                player = (Player)Scene.GameObjects.Where(x => x is Player).FirstOrDefault();
+            }
             timerPath.Update(delta);
+            attackCooldown.Update(delta);
             var time = (float)(delta.ElapsedGameTime.TotalSeconds);
             var newPos = newPosition(time);
             if (!followingPath)
             {
-                if (!playerInView())
+                if (!playerInView(10))
                 {
                     if (Scene.GridToTileLocation(newPos) != Scene.GridToTileLocation(Position))
                     {
