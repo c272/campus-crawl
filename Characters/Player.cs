@@ -23,14 +23,9 @@ namespace CampusCrawl.Characters
         private float yKnockBack = 0;
         private bool knockBacked = false;
         private float knockBackDistance = 0;
+        private Point spawnPoint = new Point();
         public Player()
         {
-            collider = new BoxColliderComponent()
-            {
-                Size = new Vector2(31, 31),
-                Location = new Vector2(0, 0)
-            };
-            AddComponent(collider);
             sprite = new SpriteComponent()
             {
                 Texture = AssetManager.AttemptLoad<Texture2D>(1215427970),
@@ -39,7 +34,17 @@ namespace CampusCrawl.Characters
             };
             AddComponent(sprite);
         }
-
+        public override void Initialize()
+        {
+            base.Initialize();
+            collider = new BoxColliderComponent()
+            {
+                Size = new Vector2(Scene.Map.TileTextureSize - 1, Scene.Map.TileTextureSize - 1),
+                Location = new Vector2(0, 0)
+            };
+            spawnPoint = new Point(0,0);
+            AddComponent(collider);
+        }
         public void onDamage(float damage,float x, float y)
         {
             health -= damage;
@@ -49,11 +54,23 @@ namespace CampusCrawl.Characters
             knockBackDistance = 33;
         }
 
+        public void respawn()
+        {
+            Position = Scene.TileToGridLocation(spawnPoint);
+            health = 100;
+            knockBacked = false;
+        }
+
         public override void Update(GameTime delta)
         {
             base.Update(delta);
             var time = (float)(delta.ElapsedGameTime.TotalSeconds);
             var movement = InputHandler.GetEvent("Movement");
+            if(health <= 0)
+            {
+                respawn();
+            }
+
             if (!knockBacked)
             {
                 Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
@@ -73,7 +90,6 @@ namespace CampusCrawl.Characters
                 {
                     knockBacked = false;
                 }
-
             }
             //...
         }
