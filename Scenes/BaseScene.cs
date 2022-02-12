@@ -10,7 +10,7 @@ using tileEngine.SDK.Components;
 
 namespace CampusCrawl.Scenes
 {
-    public class BaseScene : Scene
+    public abstract class BaseScene : Scene
     {
         public override void Initialize()
         {
