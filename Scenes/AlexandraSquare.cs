@@ -6,9 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using tileEngine.SDK;
 
+
 namespace CampusCrawl.Scenes
 {
-    public class AlexandraSquare : Scene
+    public class AlexandraSquare : BaseScene
     {
         public override void Initialize()
         {

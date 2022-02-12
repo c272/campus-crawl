@@ -33,7 +33,7 @@ namespace CampusCrawl.Characters
             xKnockBack = x;
             yKnockBack = y;
             knockBacked = true;
-            knockBackDistance = 33;
+            knockBackDistance = 40;
         }
 
         public override void Update(GameTime delta)

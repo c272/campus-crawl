@@ -57,7 +57,7 @@ namespace CampusCrawl.Characters
             public Point RelativeLocation { get; }
         }
 
-        public Enemy(string directionName, float distance)
+        public Enemy(string directionName, float distance, Vector2 location)
         {
             if (directionName == "up" || directionName == "left")
                 direction = -1;
@@ -65,7 +65,7 @@ namespace CampusCrawl.Characters
                 direction = 1;
             this.directionName = directionName;
             patrolDistance = distance;
-            Position = new Vector2(320, 0);
+            Position = location;
             sprite = new SpriteComponent()
             {
                 Texture = AssetManager.AttemptLoad<Texture2D>(-1280955819),
