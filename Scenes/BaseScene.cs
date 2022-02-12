@@ -26,13 +26,12 @@ namespace CampusCrawl.Scenes
 
         public void spawnEnemy(int amount, int[] rangeX, int[] rangeY, int layer)
         {
-            Scene scene = TileEngine.Instance.GetScene();
             List<Point> spawnableTiles = new List<Point>();
             for (int x = rangeX[0]; x < rangeX[1]; x++)
             {
                 for (int y = rangeY[0]; y < rangeY[1]; y++)
                 {
-                    if (!scene.Map.Layers.Where(a => a.ID == layer).FirstOrDefault().CollisionHull.ContainsKey(new Point(x, y)))
+                    if (Map.Layers.Where(a => a.ID == layer).FirstOrDefault().CollisionHull.ContainsKey(new Point(x, y)))
                     {
                         spawnableTiles.Add(new Point(x, y));
                     }
@@ -44,7 +43,7 @@ namespace CampusCrawl.Scenes
                 var index = random.Next(spawnableTiles.Count);
                 var enemyPos = spawnableTiles[index];
                 spawnableTiles.RemoveAt(index);
-                var newEnemy = new Enemy("up", 4, scene.TileToGridLocation(enemyPos));
+                var newEnemy = new Enemy("up", 4, TileToGridLocation(enemyPos));
                 TileEngine.Instance.GetScene().AddObject(newEnemy);
                 newEnemy.SetLayer("Objects");
             }
