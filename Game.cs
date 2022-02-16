@@ -29,7 +29,7 @@ namespace CampusCrawl
             enemy.SetLayer("Objects");
             mainPlayer.SetLayer("Objects");
             BaseScene scene = (BaseScene)TileEngine.Instance.GetScene();
-            scene.spawnEnemy(2, new int[2] { -5, 5 }, new int[2] { -5, 5 },mainPlayer.Layer);
+            scene.spawnEnemy(1, new int[2] { -5, 5 }, new int[2] { -5, 5 },mainPlayer.Layer);
         }
 
         public override void Shutdown()

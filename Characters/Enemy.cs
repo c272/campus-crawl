@@ -268,13 +268,18 @@ namespace CampusCrawl.Characters
             }
         }
 
-        private bool playerInView(int distance)
+        private bool playerInView(int distance, bool flag)
         {
-            var playerTile = Scene.GridToTileLocation(player.Position);
-            var currentTile = Scene.GridToTileLocation(Position);
-            if(Math.Abs(playerTile.X - currentTile.X) < distance && Math.Abs(playerTile.Y - currentTile.Y) < distance)
+            Point playerTile = Scene.GridToTileLocation(player.Position);
+            Point currentTile = Scene.GridToTileLocation(Position);
+            if (flag)
             {
-                return true; 
+                playerTile = new Point((int)player.Position.X, (int)player.Position.Y);
+                currentTile = new Point((int)Position.X, (int)Position.Y);
+            }
+            if (Math.Abs(playerTile.X - currentTile.X) < distance && Math.Abs(playerTile.Y - currentTile.Y) < distance)
+            {
+                return true;
             }
             return false;
         }
@@ -283,7 +288,7 @@ namespace CampusCrawl.Characters
         {
             var playerTile = Scene.GridToTileLocation(player.Position);
             var enemyTile = Scene.GridToTileLocation(Position);
-            if (playerInView(10))
+            if (playerInView(10,false))
             {
                 newPath(playerTile, enemyTile);
                 followingPath = true;
@@ -315,7 +320,7 @@ namespace CampusCrawl.Characters
         }
         private void attack()
         {
-            if (playerInView(2))
+            if (playerInView(45,true))
             {
                 var distance = knockBackDirection();
                 player.onDamage(damage,distance[0],distance[1]);
@@ -336,7 +341,7 @@ namespace CampusCrawl.Characters
             var newPos = newPosition(time);
             if (!followingPath)
             {
-                if (!playerInView(10))
+                if (!playerInView(10,false))
                 {
                     if (Scene.GridToTileLocation(newPos) != Scene.GridToTileLocation(Position))
                     {
