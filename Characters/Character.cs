@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using tileEngine.SDK;
+using tileEngine.SDK.Audio;
 using tileEngine.SDK.Components;
 using tileEngine.SDK.Input;
 
@@ -34,6 +35,8 @@ namespace CampusCrawl.Characters
             yKnockBack = y;
             knockBacked = true;
             knockBackDistance = 40;
+            SoundReference loadedSound = TileEngine.Instance.Sound.LoadSound("Sound/testSound.mp3");
+            TileEngine.Instance.Sound.PlaySound(loadedSound);
         }
 
         public override void Update(GameTime delta)

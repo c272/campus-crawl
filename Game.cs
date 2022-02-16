@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using tileEngine.SDK;
 using CampusCrawl.Scenes;
 using CampusCrawl.Characters;
+using tileEngine.SDK.Audio;
 
 namespace CampusCrawl
 {
