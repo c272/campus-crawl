@@ -30,9 +30,9 @@ namespace CampusCrawl.Characters
             health = 100;
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
-            base.Initialize();
+            //base.Initialize();
             collider = new BoxColliderComponent()
             {
                 Size = new Vector2(Scene.Map.TileTextureSize - 1, Scene.Map.TileTextureSize - 1),

@@ -38,6 +38,8 @@
     <Compile Include="Characters\Character.cs" />
     <Compile Include="Characters\Enemy.cs" />
     <Compile Include="Characters\Player.cs" />
+    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\Weapon.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Scenes\AlexandraSquare.cs" />
     <Compile Include="Scenes\BaseScene.cs" />

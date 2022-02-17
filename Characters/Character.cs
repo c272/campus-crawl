@@ -35,14 +35,14 @@ namespace CampusCrawl.Characters
             yKnockBack = y;
             knockBacked = true;
             knockBackDistance = 40;
-            SoundReference loadedSound = TileEngine.Instance.Sound.LoadSound("Sound/testSound.mp3");
-            TileEngine.Instance.Sound.PlaySound(loadedSound);
+            // TODO: Uncomment this once issues with finding SoundReference are sorted
+            //SoundReference loadedSound = TileEngine.Instance.Sound.LoadSound("Sound/testSound.mp3");
+            //TileEngine.Instance.Sound.PlaySound(loadedSound);
         }
 
         public override void Update(GameTime delta)
         {
             base.Update(delta);
-
         }
     }
 }
