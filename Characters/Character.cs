@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CampusCrawl.Entities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -55,7 +56,21 @@ namespace CampusCrawl.Characters
             var movement = InputHandler.GetEvent("Movement");
             this.Position = new Vector2(Position.X + (movement.Value.X*time*this.speed), Position.Y + (movement.Value.Y*time*this.speed));
             
+            var weapons = Scene.GameObjects.Where(x => x is Weapon).ToList();
+            foreach (Weapon weapon in weapons)
+            {
+                if (Scene.GridToTileLocation(weapon.Position) == Scene.GridToTileLocation(this.Position))
+                {
+                    // This means, we have a weapon that we can pick up.
+                    weapon.PickedUp();
+                }
+            }
+        }
+
+        public void PickUpWeapon(string weaponPath)
+        {
             //...
+
         }
     }
 }
