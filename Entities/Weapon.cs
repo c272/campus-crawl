@@ -10,6 +10,7 @@ namespace CampusCrawl.Entities
     {
         public Weapon(string assetPath) : base(assetPath)   
         {
+
         }
     }
 }
