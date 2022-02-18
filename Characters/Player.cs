@@ -10,6 +10,8 @@ using tileEngine.SDK;
 using tileEngine.SDK.Components;
 using tileEngine.SDK.Diagnostics;
 using tileEngine.SDK.Input;
+using CampusCrawl.Entities;
+using CampusCrawl.Entities.Weapons;
 
 namespace CampusCrawl.Characters
 {
@@ -42,6 +44,13 @@ namespace CampusCrawl.Characters
             AddComponent(collider);
         }
 
+        public void spawnRandomWeapon()
+        {
+            Fists e = new Fists(this, "Assets/TestModel.png");
+            e.Scene = Scene;
+            e.SetLayer(Layer);
+            e.Spawn(Position);
+        }
 
         public void respawn()
         {
@@ -55,6 +64,7 @@ namespace CampusCrawl.Characters
             base.Update(delta);
             var time = (float)(delta.ElapsedGameTime.TotalSeconds);
             var movement = InputHandler.GetEvent("Movement");
+            Scene.LookAt(Position);
             if(health <= 0)
             {
                 respawn();

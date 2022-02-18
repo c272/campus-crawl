@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using tileEngine.SDK;
 using tileEngine.SDK.Components;
 using tileEngine.SDK.Diagnostics;
+using tileEngine.SDK.Map;
 
 namespace CampusCrawl.Entities
 {
@@ -19,12 +20,6 @@ namespace CampusCrawl.Entities
 
         public Entity(string assetPath)
         {
-            collider = new BoxColliderComponent()
-            {
-                Size = new Vector2(31, 31),
-                Location = new Vector2(0, 0)
-            };
-            AddComponent(collider);
             sprite = new SpriteComponent()
             {
                 Texture = AssetManager.AttemptLoad<Texture2D>(assetPath),
@@ -39,47 +34,54 @@ namespace CampusCrawl.Entities
             Position = Scene.TileToGridLocation(new Point(x, y));
         }
 
-        public string PickedUp()
+        public void PickedUp()
         {
             RemoveComponent(sprite);
             RemoveComponent(collider);
-
-            return assetPath;
         }
 
-        public void SetRandomLocation()
+        public void Spawn(Vector2 playerPosition)
         {
+            DiagnosticsHook.DebugMessage("Starting spawn");
+            DiagnosticsHook.DebugMessage(Scene.ToString());
+            Point playerLocation = Scene.GridToTileLocation(playerPosition);
             Random rnd = new Random();
-            var everything = Scene.GameObjects.ToList();
             int foundX = -1;
             int foundY = -1;
 
+            DiagnosticsHook.DebugMessage("Passed first set of variables");
+
             while (foundX == -1 || foundY == -1)
             {
+                DiagnosticsHook.DebugMessage("In while loop");
                 // TODO: Set this next value to a place on the map
-                foundX = rnd.Next(1, 100);
-                foundY = rnd.Next(1, 100);
-
-                Vector2 foundVector = new Vector2(foundX, foundY);
-                foreach (GameObject obj in everything)
+                foundX = rnd.Next(playerLocation.X - 10, playerLocation.X + 10);
+                foundY = rnd.Next(playerLocation.Y - 10, playerLocation.Y + 10);
+                DiagnosticsHook.DebugMessage("Got random");
+                Point foundPoint = new Point(foundX, foundY);
+                DiagnosticsHook.DebugMessage("Got point");
+                foreach (GameObject obj in Scene.GameObjects.ToList())
                 {
-                    if (obj.Position.Equals(Position))
+                    DiagnosticsHook.DebugMessage("Looking at each object");
+                    if (obj.Position.Equals(foundPoint))
                     {
                         foundX = -1;
                         foundY = -1;
                         continue;
                     }
+                    
+                }
+                TileLayer layer = Scene.Map.Layers.Where(x => x.ID == Layer).FirstOrDefault();
+                if (layer.CollisionHull?.ContainsKey(foundPoint) == true)
+                {
+                    foundX = -1;
+                    foundY = -1;
+                    continue;
                 }
 
                 DiagnosticsHook.DebugMessage($"({foundX}, {foundY})");
-                //SetLocation(foundX, foundY);
+                SetLocation(foundX, foundY);
             }
-        }
-
-        public void Initialize()
-        {
-            //SetRandomLocation();
-
         }
     }
 }

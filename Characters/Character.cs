@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CampusCrawl.Entities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -24,9 +25,29 @@ namespace CampusCrawl.Characters
         protected bool knockBacked = false;
         protected float knockBackDistance = 0;
         SoundReference damageSound;
+
+        Weapon weapon;
+
         public Character()
         {
 
+        }
+
+        public void UpdateSprite(SpriteComponent _sprite, BoxColliderComponent boxCollider = null)
+        {
+            if (sprite != null)
+                RemoveComponent(sprite);
+
+            if (boxCollider != null)
+            {
+                if (collider != null)
+                    RemoveComponent(collider);
+                collider = boxCollider;
+                AddComponent(boxCollider);
+            }
+
+            sprite = _sprite;
+            AddComponent(_sprite);
         }
 
         public override void Initialize()
@@ -49,6 +70,20 @@ namespace CampusCrawl.Characters
         public override void Update(GameTime delta)
         {
             base.Update(delta);
+
+            var entities = Scene.GameObjects.Where(x => x is Entity).ToList();
+            foreach (Entity entity in entities)
+            {
+                if (Scene.GridToTileLocation(entity.Position) == Scene.GridToTileLocation(this.Position))
+                {
+                    // This means, we have a weapon that we can pick up.
+                    entity.PickedUp();
+                    if (entity is Weapon)
+                    {
+                        weapon = (Weapon)entity;
+                    }
+                }
+            }
         }
     }
 }

@@ -22,14 +22,19 @@ namespace CampusCrawl
 
             mainPlayer = new Player();
             var enemy = new Enemy("left",5,new Vector2(320,0));
+            var entity = new Entities.Entity("Assets/TestModel.png");
             TileEngine.Instance.SetScene(typeof(AlexandraSquare));
             TileEngine.Instance.GetScene().AddObject(mainPlayer);
             TileEngine.Instance.GetScene().AddObject(enemy);
+            TileEngine.Instance.GetScene().AddObject(entity);
             TileEngine.Instance.GetScene().CameraPosition = new Vector2(-320, -320);
             enemy.SetLayer("Objects");
             mainPlayer.SetLayer("Objects");
+
             BaseScene scene = (BaseScene)TileEngine.Instance.GetScene();
             scene.spawnEnemy(1, new int[2] { -5, 5 }, new int[2] { -5, 5 },mainPlayer.Layer);
+
+            mainPlayer.spawnRandomWeapon();
         }
 
         public override void Shutdown()
