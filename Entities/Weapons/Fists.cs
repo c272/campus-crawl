@@ -12,7 +12,7 @@ namespace CampusCrawl.Entities.Weapons
 {
     internal class Fists : Weapon
     {
-        public Fists(Character character, string playerModel) : base(character, playerModel, "Assets/Weapon_Fists.png")
+        public Fists(Character character, string playerModel) : base(character, playerModel, "Assets/TestModel.png")
         {
             // assetPath = the model that is shown on the ground to be picked up
             // restingModel = the model of the player with 
@@ -26,7 +26,7 @@ namespace CampusCrawl.Entities.Weapons
 
             character.UpdateSprite(new tileEngine.SDK.Components.SpriteComponent
             {
-                Texture = AssetManager.AttemptLoad<Texture2D>(restingModel),
+                Texture = AssetManager.AttemptLoad<Texture2D>(1215427970), // Texture = AssetManager.AttemptLoad<Texture2D>(restingModel),
                 Position = new Vector2(0, 0),
                 Scale = new Vector2(1, 1)
             });

@@ -320,7 +320,7 @@ namespace CampusCrawl.Characters
         }
         private void attack()
         {
-            if (playerInView(45,true))
+            if (playerInView(45,true) && player.knockBacked == false)
             {
                 var distance = knockBackDirection();
                 player.onDamage(damage,distance[0],distance[1]);

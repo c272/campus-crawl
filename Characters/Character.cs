@@ -22,7 +22,7 @@ namespace CampusCrawl.Characters
         protected float health;
         protected float xKnockBack = 0;
         protected float yKnockBack = 0;
-        protected bool knockBacked = false;
+        public bool knockBacked = false;
         protected float knockBackDistance = 0;
         SoundReference damageSound;
 
