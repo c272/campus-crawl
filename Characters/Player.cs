@@ -116,7 +116,7 @@ namespace CampusCrawl.Characters
                     if ((currentTile.X - enemyTile.X == attackDirection[0] && currentTile.Y - enemyTile.Y == attackDirection[1]) || enemyTile == currentTile)
                     {
 
-                        if (Math.Abs(enemyPos.X - currentPos.X) < 40 && Math.Abs(enemyPos.Y - currentPos.Y) < 40) //this is as position is recorded to be top left of character so it means if its just touching tile above then its considered in the tile so this checks that its a little bit into the tile
+                        if (Math.Abs(enemyPos.X - currentPos.X) < 37 && Math.Abs(enemyPos.Y - currentPos.Y) < 37) //this is as position is recorded to be top left of character so it means if its just touching tile above then its considered in the tile so this checks that its a little bit into the tile
                         {
                             currentEnemy.onDamage(damage, -attackDirection[0] * 2.5f, -attackDirection[1] * 2.5f);
                         }
@@ -172,7 +172,7 @@ namespace CampusCrawl.Characters
                     foreach (GameObject enemy in enemies)
                     {
                         Enemy currentEnemy = (Enemy)enemy;
-                        if (Math.Abs(currentEnemy.Position.X - Position.X) <40 && Math.Abs(currentEnemy.Position.Y-  Position.Y) < 40)
+                        if (Math.Abs(currentEnemy.Position.X - Position.X) <37 && Math.Abs(currentEnemy.Position.Y-  Position.Y) < 37)
                         {
                             currentEnemy.onDamage(damage, -attackDirection[0] * 2.5f, -attackDirection[1] * 2.5f);
                             hit = true;

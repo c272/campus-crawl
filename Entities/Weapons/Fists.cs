@@ -27,7 +27,7 @@ namespace CampusCrawl.Entities.Weapons
             character.UpdateSprite(new tileEngine.SDK.Components.SpriteComponent
             {
                 Texture = AssetManager.AttemptLoad<Texture2D>(1215427970), // Texture = AssetManager.AttemptLoad<Texture2D>(restingModel),
-                Position = new Vector2(0, 0),
+                Position = new Vector2(-16, -16),
                 Scale = new Vector2(1, 1)
             });
         }
