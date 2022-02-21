@@ -34,7 +34,7 @@ namespace CampusCrawl.Characters
             sprite = new SpriteComponent()
             {
                 Texture = AssetManager.AttemptLoad<Texture2D>(1215427970),
-                Position = new Vector2(0, 0),
+                Position = new Vector2(-16, -16),
                 Scale = new Vector2(1, 1)
             };
             AddComponent(sprite);
@@ -52,7 +52,7 @@ namespace CampusCrawl.Characters
             collider = new BoxColliderComponent()
             {
                 Size = new Vector2(Scene.Map.TileTextureSize, Scene.Map.TileTextureSize),
-                Location = new Vector2(0, 0)
+                Location = new Vector2(-16, -16)
             };
             spawnPoint = new Point(0,0);
             AddComponent(collider);
@@ -103,8 +103,6 @@ namespace CampusCrawl.Characters
 
         public void checkAttack()
         {
-            var mousePos = InputHandler.GetEvent("MousePosition");
-            var gridPos = Scene.ToGridLocation(mousePos.Value);
             Point currentTile = Scene.GridToTileLocation(Position);
             var enemies = Scene.GameObjects.Where(x => x is Enemy).ToArray();
             foreach (GameObject enemy in enemies)
@@ -118,7 +116,7 @@ namespace CampusCrawl.Characters
                     if ((currentTile.X - enemyTile.X == attackDirection[0] && currentTile.Y - enemyTile.Y == attackDirection[1]) || enemyTile == currentTile)
                     {
 
-                        if (Math.Abs(enemyPos.X - currentPos.X) < 50 && Math.Abs(enemyPos.Y - currentPos.Y) < 50) //this is as position is recorded to be top left of character so it means if its just touching tile above then its considered in the tile so this checks that its a little bit into the tile
+                        if (Math.Abs(enemyPos.X - currentPos.X) < 40 && Math.Abs(enemyPos.Y - currentPos.Y) < 40) //this is as position is recorded to be top left of character so it means if its just touching tile above then its considered in the tile so this checks that its a little bit into the tile
                         {
                             currentEnemy.onDamage(damage, -attackDirection[0] * 2.5f, -attackDirection[1] * 2.5f);
                         }
@@ -139,7 +137,7 @@ namespace CampusCrawl.Characters
             attackDirection = mouseDirection();
             attackX = -attackDirection[0] * 3;
             attackY = -attackDirection[1] * 3;
-            attackDistance = 40;
+            attackDistance = 60;
         }
 
         public void cooldown()
@@ -168,14 +166,13 @@ namespace CampusCrawl.Characters
             {
                 if (attacking)
                 {
-                    var temp = Scene.GridToTileLocation(new Vector2(Position.X + (attackX * time * speed), Position.Y + (attackY * time * speed)));
-                    Position = new Vector2(Position.X + (attackX * time * speed), Position.Y + (attackY * time * speed));
                     var enemies = Scene.GameObjects.Where(x => x is Enemy).ToArray();
                     var hit = false;
+                    var tempTile = Scene.GridToTileLocation(new Vector2(Position.X + (attackX * time * speed), Position.Y + (attackY * time * speed)));
                     foreach (GameObject enemy in enemies)
                     {
                         Enemy currentEnemy = (Enemy)enemy;
-                        if (Scene.GridToTileLocation(currentEnemy.Position) == temp)
+                        if (Math.Abs(currentEnemy.Position.X - Position.X) <40 && Math.Abs(currentEnemy.Position.Y-  Position.Y) < 40)
                         {
                             currentEnemy.onDamage(damage, -attackDirection[0] * 2.5f, -attackDirection[1] * 2.5f);
                             hit = true;
@@ -183,9 +180,9 @@ namespace CampusCrawl.Characters
                             attackX = 0;
                             attackY = 0;
                             attackDistance = 0;
-                            DiagnosticsHook.DebugMessage("yayaya");
                         }
                     }
+                    Position = new Vector2(Position.X + (attackX * time * speed), Position.Y + (attackY * time * speed));
                     if (hit == false)
                     {
                         if (attackX != 0)

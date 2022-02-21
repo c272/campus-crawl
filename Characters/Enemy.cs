@@ -68,7 +68,7 @@ namespace CampusCrawl.Characters
             sprite = new SpriteComponent()
             {
                 Texture = AssetManager.AttemptLoad<Texture2D>(-1280955819),
-                Position = new Vector2(0, 0),
+                Position = new Vector2(-16, -16),
                 Scale = new Vector2(1, 1)
             };
             AddComponent(sprite);
@@ -89,7 +89,7 @@ namespace CampusCrawl.Characters
             collider = new BoxColliderComponent()
             {
                 Size = new Vector2(Scene.Map.TileTextureSize - 1, Scene.Map.TileTextureSize - 1),
-                Location = new Vector2(0, 0)
+                Location = new Vector2(-16,-16)
             };
             AddComponent(collider);
             timerPath.Start();
@@ -325,7 +325,7 @@ namespace CampusCrawl.Characters
         }
         private void attack()
         {
-            if (playerInView(45,true) && player.knockBacked == false && knockBacked == false && player.attacking == false)
+            if (playerInView(40,true) && player.knockBacked == false && knockBacked == false && player.attacking == false)
             {
                 var distance = knockBackDirection();
                 player.onDamage(damage,distance[0],distance[1]);
