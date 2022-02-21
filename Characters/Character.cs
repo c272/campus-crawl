@@ -24,6 +24,7 @@ namespace CampusCrawl.Characters
         protected float yKnockBack = 0;
         public bool knockBacked = false;
         protected float knockBackDistance = 0;
+        protected float damage;
         SoundReference damageSound;
 
         Weapon weapon;

@@ -9,6 +9,7 @@ using tileEngine.SDK;
 using CampusCrawl.Scenes;
 using CampusCrawl.Characters;
 using tileEngine.SDK.Audio;
+using tileEngine.SDK.Input;
 
 namespace CampusCrawl
 {
@@ -18,8 +19,8 @@ namespace CampusCrawl
         public override void Initialize()
         {
             //Create movement bindings.
+            TileEngine.Instance.MouseInput.AddBinding(MouseInputType.Position, "MousePosition");
             TileEngine.Instance.KeyboardInput.AddAxisBinding(Keys.D, Keys.A, Keys.S, Keys.W, "Movement");
-
             mainPlayer = new Player();
             var enemy = new Enemy("left",5,new Vector2(320,0));
             var entity = new Entities.Entity("Assets/TestModel.png");

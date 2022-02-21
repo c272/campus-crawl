@@ -34,7 +34,7 @@ namespace CampusCrawl.Entities.Weapons
 
         public override void Attack()
         {
-
+            
         }
     }
 }
