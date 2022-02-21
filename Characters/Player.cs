@@ -22,6 +22,11 @@ namespace CampusCrawl.Characters
         private Weapon currentWeapon = null;
         private Timer attackCooldown;
         private bool canAttack = true;
+        private float attackX = 0f;
+        private float attackY = 0f;
+        private float[] attackDirection = new float[2];
+        public bool attacking = false;
+        private float attackDistance = 0f;
         MouseInputHandler mouse;
 
         public Player()
@@ -70,14 +75,14 @@ namespace CampusCrawl.Characters
             knockBacked = false;
         }
 
-        private float[] attackDirection()
+        private float[] mouseDirection()
         {
             var direction = new float[2] { 0, 0 };
             var mousePos = InputHandler.GetEvent("MousePosition");
             var gridPos = Scene.ToGridLocation(mousePos.Value);
             var mouseTile = Scene.GridToTileLocation(gridPos);
             var currentTile = Scene.GridToTileLocation(Position);
-            if (currentTile.X - mouseTile.X >= 0)
+            if (currentTile.X - mouseTile.X > 0)
             {
                 direction[0] = 1;
             }
@@ -85,7 +90,7 @@ namespace CampusCrawl.Characters
             {
                 direction[0] = -1;
             }
-            if (currentTile.Y - mouseTile.Y >= 0)
+            if (currentTile.Y - mouseTile.Y > 0)
             {
                 direction[1] = 1;
             }
@@ -96,15 +101,10 @@ namespace CampusCrawl.Characters
             return direction;
         }
 
-
-        public void attack()
+        public void checkAttack()
         {
-            canAttack = false;
-            if(currentWeapon != null)
-                currentWeapon.Attack();
             var mousePos = InputHandler.GetEvent("MousePosition");
             var gridPos = Scene.ToGridLocation(mousePos.Value);
-            var direction = attackDirection();
             Point currentTile = Scene.GridToTileLocation(Position);
             var enemies = Scene.GameObjects.Where(x => x is Enemy).ToArray();
             foreach (GameObject enemy in enemies)
@@ -115,18 +115,31 @@ namespace CampusCrawl.Characters
                     Point enemyPos = new Point((int)currentEnemy.Position.X, (int)currentEnemy.Position.Y);
                     Point enemyTile = Scene.GridToTileLocation(enemy.Position);
                     Point currentPos = new Point((int)Position.X, (int)Position.Y);
-                    if ((currentTile.X - enemyTile.X == direction[0] && currentTile.Y - enemyTile.Y == direction[1]) || enemyTile == currentTile)
+                    if ((currentTile.X - enemyTile.X == attackDirection[0] && currentTile.Y - enemyTile.Y == attackDirection[1]) || enemyTile == currentTile)
                     {
-                        
-                        if (Math.Abs(enemyPos.X - currentPos.X) < 50 && Math.Abs(enemyPos.Y - currentPos.Y) < 50)
+
+                        if (Math.Abs(enemyPos.X - currentPos.X) < 50 && Math.Abs(enemyPos.Y - currentPos.Y) < 50) //this is as position is recorded to be top left of character so it means if its just touching tile above then its considered in the tile so this checks that its a little bit into the tile
                         {
-                            DiagnosticsHook.DebugMessage((enemyTile.X.ToString() + " " + enemyTile.Y.ToString() + " P: " + currentTile.X.ToString() + " " + currentTile.Y.ToString() + "  K: " + direction[0].ToString() + " " + direction[1].ToString()));
-                            currentEnemy.onDamage(damage, -direction[0] * 2.5f, -direction[1] * 2.5f);
+                            currentEnemy.onDamage(damage, -attackDirection[0] * 2.5f, -attackDirection[1] * 2.5f);
                         }
                     }
                 }
             }
-
+            attacking = false;
+            attackX = 0;
+            attackY = 0;
+            attackDistance = 0;
+        }
+        public void attack()
+        {
+            canAttack = false;
+            if(currentWeapon != null)
+                currentWeapon.Attack();
+            attacking = true;
+            attackDirection = mouseDirection();
+            attackX = -attackDirection[0] * 3;
+            attackY = -attackDirection[1] * 3;
+            attackDistance = 40;
         }
 
         public void cooldown()
@@ -143,7 +156,7 @@ namespace CampusCrawl.Characters
             var click = 0;
             if (mouseState.LeftButton == ButtonState.Pressed)
                 click = 1;
-            if (click == 1)
+            if (click == 1 && knockBacked == false)
                 attack();
             Scene.LookAt(Position);
             if(health <= 0)
@@ -153,7 +166,46 @@ namespace CampusCrawl.Characters
 
             if (!knockBacked)
             {
-                Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
+                if (attacking)
+                {
+                    var temp = Scene.GridToTileLocation(new Vector2(Position.X + (attackX * time * speed), Position.Y + (attackY * time * speed)));
+                    Position = new Vector2(Position.X + (attackX * time * speed), Position.Y + (attackY * time * speed));
+                    var enemies = Scene.GameObjects.Where(x => x is Enemy).ToArray();
+                    var hit = false;
+                    foreach (GameObject enemy in enemies)
+                    {
+                        Enemy currentEnemy = (Enemy)enemy;
+                        if (Scene.GridToTileLocation(currentEnemy.Position) == temp)
+                        {
+                            currentEnemy.onDamage(damage, -attackDirection[0] * 2.5f, -attackDirection[1] * 2.5f);
+                            hit = true;
+                            attacking = false;
+                            attackX = 0;
+                            attackY = 0;
+                            attackDistance = 0;
+                            DiagnosticsHook.DebugMessage("yayaya");
+                        }
+                    }
+                    if (hit == false)
+                    {
+                        if (attackX != 0)
+                        {
+                            attackDistance -= Math.Abs(attackX * time * speed);
+                        }
+                        else
+                        {
+                            attackDistance -= Math.Abs(attackY * time * speed);
+                        }
+                        if (attackDistance <= 0)
+                        {
+                            checkAttack();
+                        }
+                    }
+                }
+                else
+                {
+                    Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
+                }
             }
             if (knockBacked)
             {
