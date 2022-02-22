@@ -16,18 +16,18 @@ namespace CampusCrawl.Characters
 {
     public class Enemy : Character
     {
-        private float direction = -1;
-        private float patrolDistance = 5;
-        private float currentDistance = 0;
-        private string directionName;
-        private Dictionary<Point, Node> map;
-        private List<Node> openNodes;
-        private List<Node> closedNodes;
-        private List<Node> completedPath;
-        private bool followingPath = false;
-        private Timer timerPath;
-        private Timer attackCooldown;
-        private Player player;
+        protected float direction = -1;
+        protected float patrolDistance = 5;
+        protected float currentDistance = 0;
+        protected string directionName;
+        protected Dictionary<Point, Node> map;
+        protected List<Node> openNodes;
+        protected List<Node> closedNodes;
+        protected List<Node> completedPath;
+        protected bool followingPath = false;
+        protected Timer timerPath;
+        protected Timer attackCooldown;
+        protected Player player;
         
 
         public struct Node
@@ -89,7 +89,7 @@ namespace CampusCrawl.Characters
             collider = new BoxColliderComponent()
             {
                 Size = new Vector2(Scene.Map.TileTextureSize - 1, Scene.Map.TileTextureSize - 1),
-                Location = new Vector2(-16,-16)
+                Location = new Vector2(-15.5f,-15.5f)
             };
             AddComponent(collider);
             timerPath.Start();
