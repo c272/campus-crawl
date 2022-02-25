@@ -288,7 +288,7 @@ namespace CampusCrawl.Characters
         {
             var playerTile = Scene.GridToTileLocation(player.Position);
             var enemyTile = Scene.GridToTileLocation(Position);
-            if (playerInView(10,false))
+            if (playerInView(15,false))
             {
                 newPath(playerTile, enemyTile);
                 followingPath = true;
@@ -370,7 +370,7 @@ namespace CampusCrawl.Characters
                 {
                     if (!followingPath)
                     {
-                        if (!playerInView(10, false))
+                        if (!playerInView(15, false))
                         {
                             if (Scene.GridToTileLocation(newPos) != Scene.GridToTileLocation(Position))
                             {
