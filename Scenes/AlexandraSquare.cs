@@ -16,7 +16,6 @@ namespace CampusCrawl.Scenes
         Timer spawnCooldown;
         Player player;
         Boolean timed = false;
-        int waveCounter = 0;
         public override void Initialize()
         {
             base.Initialize();

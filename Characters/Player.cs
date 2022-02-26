@@ -27,6 +27,7 @@ namespace CampusCrawl.Characters
         private float[] attackDirection = new float[2];
         public bool attacking = false;
         private float attackDistance = 0f;
+        public bool oneLife = true;
         MouseInputHandler mouse;
 
         public Player()
@@ -73,6 +74,16 @@ namespace CampusCrawl.Characters
             Position = Scene.TileToGridLocation(spawnPoint);
             health = 100;
             knockBacked = false;
+            if(oneLife)
+            {
+                var enemies = Scene.GameObjects.Where(x => x is Enemy);
+                foreach(var enemy in enemies.ToList())
+                {
+                    enemy.Scene = null;
+                }
+                var scene = (Scenes.BaseScene)Scene;
+                scene.waveCounter = 0;
+            }
         }
 
         private float[] mouseDirection()
