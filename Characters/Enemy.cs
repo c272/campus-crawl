@@ -323,14 +323,17 @@ namespace CampusCrawl.Characters
             }
             return direction;
         }
+        bool knockBacked = false;
         private void attack()
         {
+            /*
             if (playerInView(37,true) && player.knockBacked == false && knockBacked == false && player.attacking == false)
             {
                 var distance = knockBackDirection();
                 player.onDamage(damage,distance[0],distance[1]);
                 
             }
+            */
         }
 
 
@@ -352,6 +355,7 @@ namespace CampusCrawl.Characters
                 var newPos = newPosition(time);
                 if (knockBacked)
                 {
+                    /*
                     Position = new Vector2(Position.X + (xKnockBack * time * speed), Position.Y + (yKnockBack * time * speed));
                     if (xKnockBack != 0)
                     {
@@ -365,6 +369,7 @@ namespace CampusCrawl.Characters
                     {
                         knockBacked = false;
                     }
+                    */
                 }
                 else
                 {
