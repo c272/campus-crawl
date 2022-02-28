@@ -18,25 +18,13 @@ namespace CampusCrawl.Entities.Weapons
         {
             damage = 1;
             range = 2;
-            knockback = 10;
+            knockback = 20;
             // assetPath = the model that is shown on the ground to be picked up
             // restingModel = the model of the player with 
 
             // Assets/TestModel.png = playerModel
             // Assets/TestModel_Fists_Resting.png = restingModel
             // Assets/TestModel_Fists_Attacked.png = attackedModel
-        }
-        
-        public override void PickedUp()
-        {
-            base.PickedUp();
-
-            character.UpdateSprite(new tileEngine.SDK.Components.SpriteComponent
-            {
-                Texture = AssetManager.AttemptLoad<Texture2D>(restingModel),
-                Position = new Vector2(-16, -16),
-                Scale = new Vector2(1, 1)
-            });
         }
         
         public void Lunge(float multiplier)

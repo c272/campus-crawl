@@ -1,5 +1,6 @@
 ﻿using CampusCrawl.Characters;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,9 @@ namespace CampusCrawl.Entities
         protected int knockback = 0;
         protected int range = 0;
         protected float damage = 0;
-        protected string playerModel;
-        protected string restingModel;
-        protected string attackedModel;
+        public string playerModel;
+        public string restingModel;
+        public string attackedModel;
         protected bool isAttacking = false;
 
         protected Character character;
@@ -30,6 +31,18 @@ namespace CampusCrawl.Entities
             string modelWithoutExtension = playerModel.Replace(".png", "");
             restingModel = modelWithoutExtension + "_" + name + "_Resting.png";
             attackedModel = modelWithoutExtension + "_" + name + "_Attacked.png";
+        }
+
+        public override void PickedUp()
+        {
+            base.PickedUp();
+
+            character.UpdateSprite(new tileEngine.SDK.Components.SpriteComponent
+            {
+                Texture = AssetManager.AttemptLoad<Texture2D>(restingModel),
+                Position = new Vector2(-16, -16),
+                Scale = new Vector2(1, 1)
+            });
         }
 
         public bool canAttack(Point enemyTile, Point playerTile, float[] mouseDirection)
@@ -86,6 +99,7 @@ namespace CampusCrawl.Entities
             if (!isAttacking)
             {
                 isAttacking = true;
+
 
                 float[] attackDirection = character.mouseDirection();
                 Point currentTile = Scene.GridToTileLocation(character.Position);

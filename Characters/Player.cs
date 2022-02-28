@@ -91,7 +91,6 @@ namespace CampusCrawl.Characters
             Position = Scene.TileToGridLocation(spawnPoint);
             health = 100;
             pushStats.reset();
-            knockBacked = false;
             if(oneLife)
             {
                 var enemies = Scene.GameObjects.Where(x => x is Enemy);
@@ -113,7 +112,25 @@ namespace CampusCrawl.Characters
         private void handlePrimaryAttack(MouseState mouseState)
         {
             if (mouseState.LeftButton == ButtonState.Pressed)
+            {
+                UpdateSprite(new SpriteComponent
+                {
+                    Texture = AssetManager.AttemptLoad<Texture2D>(weapon.attackedModel),
+                    Position = new Vector2(-16, -16),
+                    Scale = new Vector2(1, 1)
+                });
                 weapon.Attack();
+            }
+
+            if (mouseState.LeftButton == ButtonState.Released)
+            {
+                UpdateSprite(new SpriteComponent
+                {
+                    Texture = AssetManager.AttemptLoad<Texture2D>(weapon.restingModel),
+                    Position = new Vector2(-16, -16),
+                    Scale = new Vector2(1, 1)
+                });
+            }
         }
 
         private int rightButtonHeld = 0;
@@ -140,10 +157,22 @@ namespace CampusCrawl.Characters
             {
                 if (weapon is Fists)
                 {
+                    UpdateSprite(new SpriteComponent
+                    {
+                        Texture = AssetManager.AttemptLoad<Texture2D>(weapon.attackedModel),
+                        Position = new Vector2(-16, -16),
+                        Scale = new Vector2(1, 1)
+                    });
                     ((Fists)weapon).Lunge(clamp(rightButtonHeld / 10, 0, 20));
                 }
                 rightButtonHeld = 0;
                 rightButtonReleased = false;
+                UpdateSprite(new SpriteComponent
+                {
+                    Texture = AssetManager.AttemptLoad<Texture2D>(weapon.restingModel),
+                    Position = new Vector2(-16, -16),
+                    Scale = new Vector2(1, 1)
+                });
             }
         }
 
