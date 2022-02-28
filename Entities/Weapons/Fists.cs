@@ -27,13 +27,13 @@ namespace CampusCrawl.Entities.Weapons
             // Assets/TestModel_Fists_Attacked.png = attackedModel
         }
         
-        public void Lunge(float multiplier)
+        public void Lunge(float multiplier,bool player)
         {
             range += 2;
             damage += 1 * multiplier;
             float[] attackDirection = character.mouseDirection();
             character.PushSelf(-(int)attackDirection[0] * lungeSize, -(int)attackDirection[1] * lungeSize);
-            Attack(true);
+            Attack(true,player);
             range -= 2;
         }
     }

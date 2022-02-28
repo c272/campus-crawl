@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CampusCrawl.Entities;
+using CampusCrawl.Entities.Weapons;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -28,7 +30,7 @@ namespace CampusCrawl.Characters
         protected Timer timerPath;
         protected Timer attackCooldown;
         protected Player player;
-        
+        public Weapon weapon;
 
         public struct Node
         {
@@ -326,14 +328,11 @@ namespace CampusCrawl.Characters
         bool knockBacked = false;
         private void attack()
         {
-            /*
-            if (playerInView(37,true) && player.knockBacked == false && knockBacked == false && player.attacking == false)
+            
+            if (playerInView(37,true) && player.attacking == false)
             {
-                var distance = knockBackDirection();
-                player.onDamage(damage,distance[0],distance[1]);
-                
+                //((Fists)weapon).Lunge(1, false);
             }
-            */
         }
 
 

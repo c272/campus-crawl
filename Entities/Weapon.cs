@@ -44,13 +44,70 @@ namespace CampusCrawl.Entities
                 Scale = new Vector2(1, 1)
             });
         }
+        public bool canAttack(Point enemyTile, Point playerTile, float[] mouseDirection)
+        {
+            if (mouseDirection[0] == -1)
+            {
+                // Check X for the radius.
+                if (playerTile.X > enemyTile.X || playerTile.X + range < enemyTile.X)
+                {
+                    return false;
+                }
+            }
+            else if (mouseDirection[0] == 1)
+            {
+                // Check X for the radius.
+                if (playerTile.X - range > enemyTile.X || playerTile.X < enemyTile.X)
+                {
+                    return false;
+                }
+            }
+            else if (mouseDirection[0] == 0 && playerTile.X != enemyTile.X)
+            {
+                return false;
+            }
 
-        public bool checkAttack(Vector2 newPos)
+            if (mouseDirection[1] == 1)
+            {
+                // Check to see if Y is within the radius for attack.
+                if (playerTile.Y - range > enemyTile.Y || playerTile.Y < enemyTile.Y)
+                {
+                    return false;
+                }
+            }
+            else if (mouseDirection[1] == -1)
+            {
+                // Check to see if Y is within the radius for attack.
+                if (playerTile.Y > enemyTile.Y || playerTile.Y + range < enemyTile.Y)
+                {
+                    return false;
+                }
+            }
+            else if (mouseDirection[1] == 0 && playerTile.Y != enemyTile.Y)
+            {
+                return false;
+            }
+
+            if (mouseDirection[0] != 0 || mouseDirection[1] != 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool checkAttack(Vector2 newPos,bool player)
         {
 
             Point currentTile = Scene.GridToTileLocation(newPos);
-            var enemies = Scene.GameObjects.Where(x => x is Enemy).ToArray();
             bool hit = false;
+            var enemies = Scene.GameObjects.Where(x => x is Character).ToArray();
+            if (player)
+            {
+                enemies = Scene.GameObjects.Where(x => x is Enemy).ToArray();
+            }
             foreach (GameObject enemy in enemies)
             {
                 Enemy currentEnemy = (Enemy)enemy;
@@ -72,13 +129,16 @@ namespace CampusCrawl.Entities
             return false;
         }
 
-        public virtual bool Attack(bool lungeAttack)
+        public virtual bool Attack(bool lungeAttack,bool player)
         {
             isAttacking = true;
             character.attackDirection = character.mouseDirection();
             Point currentTile = Scene.GridToTileLocation(character.Position);
-
-            var enemies = Scene.GameObjects.Where(x => x is Enemy).ToArray();
+            var enemies = Scene.GameObjects.Where(x => x is Character).ToArray();
+            if (player)
+            {
+                enemies = Scene.GameObjects.Where(x => x is Enemy).ToArray();
+            }
             foreach (Enemy enemy in enemies)
             {
                 Point enemyTile = Scene.GridToTileLocation(enemy.Position);
@@ -92,7 +152,7 @@ namespace CampusCrawl.Entities
                 }
                 else
                 {
-                    if ((Math.Abs(currentTile.X - enemyTile.X) <= character.attackDirection[0]+range && Math.Abs(currentTile.Y - enemyTile.Y) <= character.attackDirection[1]+range) || enemyTile == currentTile)
+                    if (canAttack(enemyTile, currentTile, character.attackDirection))
                     {
                         enemy.onDamage(damage, character.attackDirection, knockback);
                         isAttacking = false;
