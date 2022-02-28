@@ -10,6 +10,8 @@ using CampusCrawl.Scenes;
 using CampusCrawl.Characters;
 using tileEngine.SDK.Audio;
 using tileEngine.SDK.Input;
+using tileEngine.SDK.GUI;
+using tileEngine.SDK.GUI.Elements;
 
 namespace CampusCrawl
 {
@@ -28,10 +30,8 @@ namespace CampusCrawl
             TileEngine.Instance.GetScene().AddObject(entity);
             TileEngine.Instance.GetScene().CameraPosition = new Vector2(-320, -320);
             mainPlayer.SetLayer("Objects");
-
+            UI.Initialize("Fonts/MakanHati-vmp94.ttf");
             BaseScene scene = (BaseScene)TileEngine.Instance.GetScene();
-            // scene.spawnEnemy(1, new int[2] { -5, 5 }, new int[2] { -5, 5 },mainPlayer.Layer);
-
             mainPlayer.spawnRandomWeapon();
         }
 

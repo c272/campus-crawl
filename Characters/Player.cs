@@ -13,6 +13,8 @@ using tileEngine.SDK.Input;
 using CampusCrawl.Entities;
 using CampusCrawl.Entities.Weapons;
 using tileEngine.SDK.Utility;
+using tileEngine.SDK.GUI.Elements;
+using tileEngine.SDK.GUI;
 
 namespace CampusCrawl.Characters
 {
@@ -29,7 +31,7 @@ namespace CampusCrawl.Characters
         private float attackDistance = 0f;
         public bool oneLife = true;
         MouseInputHandler mouse;
-
+        public ProgressBar healthBar;
         public Player()
         {
             sprite = new SpriteComponent()
@@ -45,6 +47,11 @@ namespace CampusCrawl.Characters
             speed = 110;
             health = 100;
             damage = 20;
+            healthBar = new ProgressBar(new Vector2(200, 32));
+            healthBar.ForegroundColour = Color.Green;
+            healthBar.BackgroundColour = Color.Red;
+            healthBar.Value = 1;
+            UI.AddElement(healthBar);
         }
 
         public override void Initialize()
@@ -172,7 +179,7 @@ namespace CampusCrawl.Characters
             {
                 respawn();
             }
-
+            healthBar.Value = health / 100;
             if (!knockBacked)
             {
                 if (attacking)
