@@ -13,6 +13,8 @@ using tileEngine.SDK.Input;
 using CampusCrawl.Entities;
 using CampusCrawl.Entities.Weapons;
 using tileEngine.SDK.Utility;
+using tileEngine.SDK.GUI.Elements;
+using tileEngine.SDK.GUI;
 
 namespace CampusCrawl.Characters
 {
@@ -26,8 +28,10 @@ namespace CampusCrawl.Characters
         private float[] attackDirection = new float[2];
         public bool attacking = false;
         private float attackDistance = 0f;
+        public bool oneLife = true;
         MouseInputHandler mouse;
-
+        public ProgressBar healthBar;
+        public Label healthCount;
         public Player()
         {
             sprite = new SpriteComponent()
@@ -43,6 +47,15 @@ namespace CampusCrawl.Characters
             speed = 110;
             health = 100;
             damage = 20;
+            healthBar = new ProgressBar(new Vector2(200, 32));
+            healthBar.ForegroundColour = Color.Green;
+            healthBar.BackgroundColour = Color.Red;
+            healthBar.Value = 1;
+            healthCount = new Label();
+            healthCount.FontSize = 32;
+            healthCount.Text = health.ToString() + " / " + 100;
+            UI.AddElement(healthBar);
+            UI.AddElement(healthCount);
         }
 
         public override void Initialize()
@@ -77,8 +90,18 @@ namespace CampusCrawl.Characters
         {
             Position = Scene.TileToGridLocation(spawnPoint);
             health = 100;
-            //knockBacked = false;
             pushStats.reset();
+            knockBacked = false;
+            if(oneLife)
+            {
+                var enemies = Scene.GameObjects.Where(x => x is Enemy);
+                foreach(var enemy in enemies.ToList())
+                {
+                    enemy.Scene = null;
+                }
+                var scene = (Scenes.BaseScene)Scene;
+                scene.waveCounter = 0;
+            }
         }
 
 
@@ -148,7 +171,8 @@ namespace CampusCrawl.Characters
             {
                 handleAttack(mouseState);
             }
-
+            healthBar.Value = health / 100;
+            healthCount.Text = health.ToString() + " / " + 100;
             Scene.LookAt(Position);
         }
     }
