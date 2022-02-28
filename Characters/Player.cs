@@ -119,7 +119,6 @@ namespace CampusCrawl.Characters
                     Position = new Vector2(-16, -16),
                     Scale = new Vector2(1, 1)
                 });
-                attacking = true;
                 weapon.Attack(false);
             }
 

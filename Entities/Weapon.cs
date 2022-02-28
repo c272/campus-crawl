@@ -92,7 +92,7 @@ namespace CampusCrawl.Entities
                 }
                 else
                 {
-                    if ((currentTile.X - enemyTile.X <= character.attackDirection[0] && currentTile.Y - enemyTile.Y <= character.attackDirection[1]) || enemyTile == currentTile)
+                    if ((Math.Abs(currentTile.X - enemyTile.X) <= character.attackDirection[0]+range && Math.Abs(currentTile.Y - enemyTile.Y) <= character.attackDirection[1]+range) || enemyTile == currentTile)
                     {
                         enemy.onDamage(damage, character.attackDirection, knockback);
                         isAttacking = false;
