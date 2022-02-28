@@ -32,6 +32,7 @@ namespace CampusCrawl.Characters
         public bool oneLife = true;
         MouseInputHandler mouse;
         public ProgressBar healthBar;
+        public Label healthCount;
         public Player()
         {
             sprite = new SpriteComponent()
@@ -51,7 +52,11 @@ namespace CampusCrawl.Characters
             healthBar.ForegroundColour = Color.Green;
             healthBar.BackgroundColour = Color.Red;
             healthBar.Value = 1;
+            healthCount = new Label();
+            healthCount.FontSize = 32;
+            healthCount.Text = health.ToString() + " / " + 100;
             UI.AddElement(healthBar);
+            UI.AddElement(healthCount);
         }
 
         public override void Initialize()
@@ -180,6 +185,7 @@ namespace CampusCrawl.Characters
                 respawn();
             }
             healthBar.Value = health / 100;
+            healthCount.Text = health.ToString() + " / " + 100;
             if (!knockBacked)
             {
                 if (attacking)

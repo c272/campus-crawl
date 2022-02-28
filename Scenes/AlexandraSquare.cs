@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using tileEngine.SDK;
 using tileEngine.SDK.Audio;
+using tileEngine.SDK.GUI;
+using tileEngine.SDK.GUI.Elements;
 using tileEngine.SDK.Utility;
 
 namespace CampusCrawl.Scenes
@@ -16,6 +18,7 @@ namespace CampusCrawl.Scenes
         Timer spawnCooldown;
         Player player;
         Boolean timed = false;
+        Label waveInfo;
         public override void Initialize()
         {
             base.Initialize();
@@ -27,6 +30,11 @@ namespace CampusCrawl.Scenes
             spawnCooldown.OnTick += spawnReset;
             spawnCooldown.Loop = true;
             spawnCooldown.Start();
+            waveInfo = new Label();
+            waveInfo.FontSize = 32;
+            waveInfo.Colour = Color.Black;
+            waveInfo.Anchor = UIAnchor.Right | UIAnchor.Top;
+            UI.AddElement(waveInfo);
             //...
         }
 
@@ -49,6 +57,8 @@ namespace CampusCrawl.Scenes
             {
                 player = (Player)this.GameObjects.Where(x => x is Player).FirstOrDefault();
             }
+            var enemies = this.GameObjects.Where(x => x is Enemy);
+            waveInfo.Text = "Wave " + waveCounter.ToString() + "   Enemies left: " + enemies.Count().ToString();
             if(this.GameObjects.Where(x => x is Enemy).FirstOrDefault() == null)
             {
                 waveCounter++;
