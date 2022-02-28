@@ -45,79 +45,65 @@ namespace CampusCrawl.Entities
             });
         }
 
-        public bool canAttack(Point enemyTile, Point playerTile, float[] mouseDirection)
+        public bool checkAttack(Vector2 newPos)
         {
-            if (mouseDirection[0] == -1)
-            {
-                // Check X for the radius.
-                if (playerTile.X > enemyTile.X || playerTile.X + range < enemyTile.X)
-                {
-                    return false;
-                }
-            } else if (mouseDirection[0] == 1)
-            {
-                // Check X for the radius.
-                if (playerTile.X - range > enemyTile.X || playerTile.X < enemyTile.X)
-                {
-                    return false;
-                }
-            } else if (mouseDirection[0] == 0 && playerTile.X != enemyTile.X)
-            {
-                return false;
-            }
 
-            if (mouseDirection[1] == 1)
+            Point currentTile = Scene.GridToTileLocation(newPos);
+            var enemies = Scene.GameObjects.Where(x => x is Enemy).ToArray();
+            bool hit = false;
+            foreach (GameObject enemy in enemies)
             {
-                // Check to see if Y is within the radius for attack.
-                if (playerTile.Y - range > enemyTile.Y || playerTile.Y < enemyTile.Y)
+                Enemy currentEnemy = (Enemy)enemy;
+                Point enemyPos = new Point((int)currentEnemy.Position.X, (int)currentEnemy.Position.Y);
+                Point enemyTile = Scene.GridToTileLocation(enemy.Position);
+                Point currentPos = new Point((int)newPos.X, (int)newPos.Y);
+                if ((currentTile.X - enemyTile.X <= character.attackDirection[0] && currentTile.Y - enemyTile.Y <= character.attackDirection[1]) || enemyTile == currentTile)
                 {
-                    return false;
+                    currentEnemy.onDamage(damage, character.attackDirection, (int)(knockback * 1.5));
+                    hit = true;
                 }
-            } else if (mouseDirection[1] == -1)
-            {
-                // Check to see if Y is within the radius for attack.
-                if (playerTile.Y > enemyTile.Y || playerTile.Y + range < enemyTile.Y)
+                else if (Math.Abs(enemyPos.X - currentPos.X) < 40 && Math.Abs(enemyPos.Y - currentPos.Y) < 40)
                 {
-                    return false;
+                    currentEnemy.onDamage(damage, character.attackDirection, (int)(knockback * 1.5));
+                    hit = true;
                 }
-            } else if (mouseDirection[1] == 0 && playerTile.Y != enemyTile.Y)
-            {
-                return false;
             }
-
-            if (mouseDirection[0] != 0 || mouseDirection[1] != 0)
-            {
-                return true;
-            } else
-            {
-                return false;
-            }
+            if (hit) { return true; }
+            return false;
         }
 
-        public virtual void Attack()
+        public virtual bool Attack(bool lungeAttack)
         {
-            if (!isAttacking)
+            isAttacking = true;
+            character.attackDirection = character.mouseDirection();
+            Point currentTile = Scene.GridToTileLocation(character.Position);
+
+            var enemies = Scene.GameObjects.Where(x => x is Enemy).ToArray();
+            foreach (Enemy enemy in enemies)
             {
-                isAttacking = true;
-
-
-                float[] attackDirection = character.mouseDirection();
-                Point currentTile = Scene.GridToTileLocation(character.Position);
-
-                var enemies = Scene.GameObjects.Where(x => x is Enemy).ToArray();
-                foreach (Enemy enemy in enemies)
+                Point enemyTile = Scene.GridToTileLocation(enemy.Position);
+                if (lungeAttack)
                 {
-                    Point enemyPos = new Point((int)enemy.Position.X, (int)enemy.Position.Y);
-                    Point enemyTile = Scene.GridToTileLocation(enemy.Position);
-
-                    if (canAttack(enemyTile, currentTile, attackDirection))
+                    if (Math.Abs(enemy.Position.X - character.Position.X) < 40 && Math.Abs(enemy.Position.Y - character.Position.Y) < 40)
                     {
-                        enemy.onDamage(damage, attackDirection, knockback);
+                        enemy.onDamage(damage, character.attackDirection, (int)(knockback * 1.5));
+                        isAttacking = false;
                     }
                 }
-
-                isAttacking = false;
+                else
+                {
+                    if ((currentTile.X - enemyTile.X <= character.attackDirection[0] && currentTile.Y - enemyTile.Y <= character.attackDirection[1]) || enemyTile == currentTile)
+                    {
+                        enemy.onDamage(damage, character.attackDirection, knockback);
+                        isAttacking = false;
+                    }
+                }
             }
+
+            if(isAttacking)
+                return false;
+                
+            return true;
         }
     }
 }

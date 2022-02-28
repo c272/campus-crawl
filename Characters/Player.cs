@@ -119,7 +119,8 @@ namespace CampusCrawl.Characters
                     Position = new Vector2(-16, -16),
                     Scale = new Vector2(1, 1)
                 });
-                weapon.Attack();
+                attacking = true;
+                weapon.Attack(false);
             }
 
             if (mouseState.LeftButton == ButtonState.Released)
@@ -163,6 +164,7 @@ namespace CampusCrawl.Characters
                         Position = new Vector2(-16, -16),
                         Scale = new Vector2(1, 1)
                     });
+                    attacking = true;
                     ((Fists)weapon).Lunge(clamp(rightButtonHeld / 10, 0, 20));
                 }
                 rightButtonHeld = 0;

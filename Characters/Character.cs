@@ -43,6 +43,7 @@ namespace CampusCrawl.Characters
                 currY = -1;
             }
         }
+
         public void doneXPush()
         {
             if (currX < 0) { currX--; } else { currX++; }
@@ -71,9 +72,9 @@ namespace CampusCrawl.Characters
         protected SpriteComponent sprite;
         protected float speed;
         protected float health;
-
+        protected bool attacking;
         protected Push pushStats = new Push(0, 0);
-        
+        public float[] attackDirection;
         protected float damage;
         protected SoundReference damageSound;
 
@@ -104,6 +105,7 @@ namespace CampusCrawl.Characters
         public override void Initialize()
         {
             base.Initialize();
+            attacking = false;
             damageSound = TileEngine.Instance.Sound.LoadSound("Sound/testSound.mp3");
         }
         public float[] mouseDirection()
@@ -142,7 +144,7 @@ namespace CampusCrawl.Characters
         public void onDamage(float damage, float[] attackDirection, int pushAmt)
         {
             health -= damage;
-            PushSelf((int)(attackDirection[0] * pushAmt), (int)(attackDirection[1] * pushAmt));
+            PushSelf(-(int)(attackDirection[0] * pushAmt), -(int)(attackDirection[1] * pushAmt));
 
             TileEngine.Instance.Sound.PlaySound(damageSound);
         }
@@ -176,9 +178,23 @@ namespace CampusCrawl.Characters
             // Code to move/push
             if (pushStats.isPushed())
             {
+                if (attacking)
+                {
+
+                    if(!weapon.Attack(true))
+                    {
+                        
+                        attacking = false;
+                        pushStats.reset();
+                    }
+                }
                 pushEffect(time);
-            } else
+
+            } 
+            else
             {
+                if(attacking)
+                    weapon.Attack(true);
                 Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
             }
         }
@@ -188,20 +204,27 @@ namespace CampusCrawl.Characters
             pushStats.checkPush();
             if (pushStats.isPushed() == true)
             {
+                float xPushAmt = 0;
+                float yPushAmt = 0;
                 if (pushStats.X != 0)
                 {
-                    float xPushAmt = pushStats.currX * time * speed;
-                    Position = new Vector2(Position.X + xPushAmt, Position.Y);
-
+                    xPushAmt = pushStats.currX * time * speed;
                     pushStats.doneXPush();
                 }
                 if (pushStats.Y != 0)
                 {
-                    float yPushAmt = pushStats.currY * time * speed;
-                    Position = new Vector2(Position.X, Position.Y + yPushAmt);
-
+                    yPushAmt = pushStats.currY * time * speed;
                     pushStats.doneYPush();
                 }
+                if (attacking)
+                {
+                    if (!weapon.checkAttack(new Vector2(Position.X + xPushAmt, Position.Y + yPushAmt)))
+                    {
+                        attacking = false;
+                        pushStats.reset();
+                    }
+                }
+                Position = new Vector2(Position.X + xPushAmt, Position.Y + yPushAmt);
             }
         }
     }
