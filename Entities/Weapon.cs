@@ -156,7 +156,7 @@ namespace CampusCrawl.Entities
             {
                 enemies = Scene.GameObjects.Where(x => x is Enemy).ToArray();
             }
-            foreach (Enemy enemy in enemies)
+            foreach (Character enemy in enemies)
             {
                 Point enemyTile = Scene.GridToTileLocation(enemy.Position);
                 if (lungeAttack)

@@ -32,6 +32,8 @@ namespace CampusCrawl.Entities.Weapons
             range += 2;
             damage += 1 * multiplier;
             float[] attackDirection = character.mouseDirection();
+            if (!player)
+                attackDirection = character.attackDirection;
             character.PushSelf(-(int)attackDirection[0] * lungeSize, -(int)attackDirection[1] * lungeSize);
             Attack(true,player);
             range -= 2;

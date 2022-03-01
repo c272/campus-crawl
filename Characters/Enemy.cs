@@ -29,7 +29,6 @@ namespace CampusCrawl.Characters
         protected Timer timerPath;
         protected Timer attackCooldown;
         protected Player player;
-        public Weapon weapon;
 
         public struct Node
         {
@@ -325,12 +324,12 @@ namespace CampusCrawl.Characters
 
         private void attack()
         {
-            //weapon = new Fists(this, "Assets/dave.png");
-            //weapon.Scene = this.Scene;
-            if (playerInView(37,true) && player.attacking == false)
+            if (playerInView(40,true))// && player.attacking == false)
             {
+                DiagnosticsHook.DebugMessage("a");
                 if (weapon != null)
                 {
+                    DiagnosticsHook.DebugMessage("b");
                     attackDirection = playerDirection();
                     ((Fists)weapon).Lunge(1, false);
                 }

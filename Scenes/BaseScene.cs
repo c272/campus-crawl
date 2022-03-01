@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using tileEngine.SDK;
 using CampusCrawl.Characters;
 using tileEngine.SDK.Components;
+using CampusCrawl.Entities.Weapons;
 
 namespace CampusCrawl.Scenes
 {
@@ -50,6 +51,7 @@ namespace CampusCrawl.Scenes
                     newEnemy = new EnemyTank(directions[random.Next(directions.Count())], random.Next(10), TileToGridLocation(enemyPos));
                 TileEngine.Instance.GetScene().AddObject(newEnemy);
                 newEnemy.SetLayer("Objects");
+                newEnemy.CreateAndSetWeapon(new Fists(newEnemy));
             }
         }
 
