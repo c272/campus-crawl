@@ -40,12 +40,20 @@ namespace CampusCrawl.Scenes
 
         public void spawnReset()
         {
-            if(player != null && timed)
-                spawnEnemy(1, new int[] { -10, 69 }, new int[] { -8, 6 },player.Layer,0);
+            if (player != null && timed)
+            {
+                player.respawn();
+                spawnEnemy(1, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer, 0);
+            }
         }
 
         public void waveReset()
         {
+            if (player.health < 100)
+                if (player.health > 70)
+                    player.health = 100;
+                else
+                    player.health += 30;
             spawnEnemy(waveCounter*4, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer,0);
             spawnEnemy(waveCounter, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer, 1);
             //make it so it spawns different enemy types at higher waves - need different enemy types

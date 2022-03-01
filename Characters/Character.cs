@@ -71,7 +71,7 @@ namespace CampusCrawl.Characters
         protected BoxColliderComponent collider;
         protected SpriteComponent sprite;
         protected float speed;
-        protected float health;
+        public float health;
         protected bool attacking;
         protected Push pushStats = new Push(0, 0);
         public float[] attackDirection;
