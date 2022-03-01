@@ -132,7 +132,10 @@ namespace CampusCrawl.Entities
         public virtual bool Attack(bool lungeAttack,bool player)
         {
             isAttacking = true;
-            character.attackDirection = character.mouseDirection();
+            if (player)
+            {
+                character.attackDirection = character.mouseDirection();
+            }
             Point currentTile = Scene.GridToTileLocation(character.Position);
             var enemies = Scene.GameObjects.Where(x => x is Character).ToArray();
             if (player)

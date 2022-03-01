@@ -96,6 +96,7 @@ namespace CampusCrawl.Characters
             AddComponent(collider);
             timerPath.Start();
             attackCooldown.Start();
+            
         }
         /*
          * Checks if a tile has collision at set point
@@ -326,12 +327,41 @@ namespace CampusCrawl.Characters
             return direction;
         }
         bool knockBacked = false;
+
+        public float[] playerDirection()
+        {
+            var direction = new float[2] { 0, 0 };
+            var playerTile = Scene.GridToTileLocation(player.Position);
+            var currentTile = Scene.GridToTileLocation(Position);
+            if (currentTile.X - playerTile.X > 0)
+            {
+                direction[0] = 1;
+            }
+            if (currentTile.X - playerTile.X < 0)
+            {
+                direction[0] = -1;
+            }
+            if (currentTile.Y - playerTile.Y > 0)
+            {
+                direction[1] = 1;
+            }
+            if (currentTile.Y - playerTile.Y < 0)
+            {
+                direction[1] = -1;
+            }
+            return direction;
+        }
+
         private void attack()
         {
-            
+            weapon = new Fists(this, "dave.png");
             if (playerInView(37,true) && player.attacking == false)
             {
-                //((Fists)weapon).Lunge(1, false);
+                if (weapon != null)
+                {
+                    attackDirection = playerDirection();
+                    ((Fists)weapon).Lunge(1, false);
+                }
             }
         }
 
@@ -352,77 +382,56 @@ namespace CampusCrawl.Characters
                 attackCooldown.Update(delta);
                 var time = (float)(delta.ElapsedGameTime.TotalSeconds);
                 var newPos = newPosition(time);
-                if (knockBacked)
+                if (!followingPath)
                 {
-                    /*
-                    Position = new Vector2(Position.X + (xKnockBack * time * speed), Position.Y + (yKnockBack * time * speed));
-                    if (xKnockBack != 0)
+                    if (!playerInView(15, false))
                     {
-                        knockBackDistance -= Math.Abs(xKnockBack * time * speed);
-                    }
-                    else
-                    {
-                        knockBackDistance -= Math.Abs(yKnockBack * time * speed);
-                    }
-                    if (knockBackDistance <= 0)
-                    {
-                        knockBacked = false;
-                    }
-                    */
-                }
-                else
-                {
-                    if (!followingPath)
-                    {
-                        if (!playerInView(15, false))
+                        if (Scene.GridToTileLocation(newPos) != Scene.GridToTileLocation(Position))
                         {
-                            if (Scene.GridToTileLocation(newPos) != Scene.GridToTileLocation(Position))
-                            {
-                                currentDistance++;
-                                if (!checkPosition(Scene.GridToTileLocation(newPos)))
-                                {
-                                    direction = -direction;
-                                    currentDistance = 0;
-                                }
-                            }
-                            if (currentDistance == patrolDistance)
+                            currentDistance++;
+                            if (!checkPosition(Scene.GridToTileLocation(newPos)))
                             {
                                 direction = -direction;
                                 currentDistance = 0;
                             }
-                            Position = newPosition(time);
+                        }
+                        if (currentDistance == patrolDistance)
+                        {
+                            direction = -direction;
+                            currentDistance = 0;
+                        }
+                        Position = newPosition(time);
+                    }
+                }
+                else
+                {
+                    Point current = Scene.GridToTileLocation(Position);
+                    Point target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
+                    int xValue = 0;
+                    int yValue = 0;
+                    if (current.Equals(target))
+                    {
+                        if (completedPath.Count == 1)
+                        {
+                            followingPath = false;
+                        }
+                        else
+                        {
+                            completedPath.RemoveAt(0);
+                            target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
                         }
                     }
-                    else
+                    if (followingPath)
                     {
-                        Point current = Scene.GridToTileLocation(Position);
-                        Point target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
-                        int xValue = 0;
-                        int yValue = 0;
-                        if (current.Equals(target))
-                        {
-                            if (completedPath.Count == 1)
-                            {
-                                followingPath = false;
-                            }
-                            else
-                            {
-                                completedPath.RemoveAt(0);
-                                target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
-                            }
-                        }
-                        if (followingPath)
-                        {
-                            if (current.X > target.X)
-                                xValue = -1;
-                            if (current.X < target.X)
-                                xValue = 1;
-                            if (current.Y > target.Y)
-                                yValue = -1;
-                            if (current.Y < target.Y)
-                                yValue = 1;
-                            Position = new Vector2(Position.X + (xValue * time * speed), Position.Y + (yValue * time * speed));
-                        }
+                        if (current.X > target.X)
+                            xValue = -1;
+                        if (current.X < target.X)
+                            xValue = 1;
+                        if (current.Y > target.Y)
+                            yValue = -1;
+                        if (current.Y < target.Y)
+                            yValue = 1;
+                        Position = new Vector2(Position.X + (xValue * time * speed), Position.Y + (yValue * time * speed));
                     }
                 }
             }
