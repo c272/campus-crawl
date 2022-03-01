@@ -25,7 +25,7 @@ namespace CampusCrawl.Scenes
             //...
         }
 
-        public void spawnEnemy(int amount, int[] rangeX, int[] rangeY, int layer)
+        public void spawnEnemy(int amount, int[] rangeX, int[] rangeY, int layer,int enemyType)
         {
             string[] directions = new string[] { "up", "down", "left", "right" };
             List<Point> spawnableTiles = new List<Point>();
@@ -45,7 +45,9 @@ namespace CampusCrawl.Scenes
                 var index = random.Next(spawnableTiles.Count);
                 var enemyPos = spawnableTiles[index];
                 spawnableTiles.RemoveAt(index);
-                var newEnemy = new Enemy(directions[random.Next(directions.Count())],random.Next(10), TileToGridLocation(enemyPos));
+                var newEnemy = new Enemy(directions[random.Next(directions.Count())], random.Next(10), TileToGridLocation(enemyPos));
+                if (enemyType == 1)
+                    newEnemy = new EnemyTank(directions[random.Next(directions.Count())], random.Next(10), TileToGridLocation(enemyPos));
                 TileEngine.Instance.GetScene().AddObject(newEnemy);
                 newEnemy.SetLayer("Objects");
             }

@@ -50,8 +50,8 @@ namespace CampusCrawl.Entities
             while (foundX == -1 || foundY == -1)
             {
                 // TODO: Set this next value to a place on the map
-                foundX = rnd.Next(playerLocation.X - 10, playerLocation.X + 10);
-                foundY = rnd.Next(playerLocation.Y - 10, playerLocation.Y + 10);
+                foundX = rnd.Next(playerLocation.X - 3, playerLocation.X + 3); //note was 10 but made it 3 so it spawns close
+                foundY = rnd.Next(playerLocation.Y - 3, playerLocation.Y + 3);
                 Point foundPoint = new Point(foundX, foundY);
                 foreach (GameObject obj in Scene.GameObjects.ToList())
                 {

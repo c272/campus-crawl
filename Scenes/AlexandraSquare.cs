@@ -41,12 +41,13 @@ namespace CampusCrawl.Scenes
         public void spawnReset()
         {
             if(player != null && timed)
-                spawnEnemy(1, new int[] { -10, 69 }, new int[] { -8, 6 },player.Layer);
+                spawnEnemy(1, new int[] { -10, 69 }, new int[] { -8, 6 },player.Layer,0);
         }
 
         public void waveReset()
         {
-            spawnEnemy(waveCounter*4, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer);
+            spawnEnemy(waveCounter*4, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer,0);
+            spawnEnemy(waveCounter, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer, 1);
             //make it so it spawns different enemy types at higher waves - need different enemy types
         }
 

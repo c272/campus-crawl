@@ -352,7 +352,7 @@ namespace CampusCrawl.Characters
 
         private void attack()
         {
-            weapon = new Fists(this, "Assets/dave.png");
+            //weapon = new Fists(this, "Assets/dave.png");
             //weapon.Scene = this.Scene;
             if (playerInView(37,true) && player.attacking == false)
             {
