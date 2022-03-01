@@ -78,7 +78,7 @@ namespace CampusCrawl.Characters
         public float[] attackDirection;
         protected float damage;
         protected SoundReference damageSound;
-
+        protected bool isEnemy = false;
         protected Weapon weapon;
 
         public Character()
@@ -189,15 +189,14 @@ namespace CampusCrawl.Characters
                         pushStats.reset();
                     }
                 }
-                if(!followingPath)
-                    pushEffect(time);
+                pushEffect(time);
 
             } 
             else
             {
                 if(attacking)
                     weapon.Attack(true,true);
-                if (!followingPath)
+                if (!isEnemy)
                     Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
             }
         }

@@ -59,6 +59,7 @@ namespace CampusCrawl.Characters
 
         public Enemy(string directionName, float distance, Vector2 location)
         {
+            isEnemy = true;
             if (directionName == "up" || directionName == "left")
                 direction = -1;
             if (directionName == "down" || directionName == "right")
