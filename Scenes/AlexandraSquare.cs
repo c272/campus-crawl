@@ -68,7 +68,7 @@ namespace CampusCrawl.Scenes
             }
             var enemies = this.GameObjects.Where(x => x is Enemy);
             waveInfo.Text = "Wave " + waveCounter.ToString() + "   Enemies left: " + enemies.Count().ToString();
-            if(this.GameObjects.Where(x => x is Enemy).FirstOrDefault() == null)
+            if(this.GameObjects.Where(x => x is Enemy).FirstOrDefault() == null && TileEngine.Instance.GetScene() != null)
             {
                 waveCounter++;
                 waveReset();
