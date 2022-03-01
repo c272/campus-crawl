@@ -74,7 +74,7 @@ namespace CampusCrawl.Characters
                 Scale = new Vector2(1, 1)
             };
             AddComponent(sprite);
-            attackCooldown = new Timer(0.5f);
+            attackCooldown = new Timer(5f);
             attackCooldown.OnTick += attack;
             attackCooldown.Loop = true;
             timerPath = new Timer(0.5f);
@@ -326,10 +326,9 @@ namespace CampusCrawl.Characters
         {
             if (playerInView(40,true))// && player.attacking == false)
             {
-                DiagnosticsHook.DebugMessage("a");
+                attacking = true;
                 if (weapon != null)
                 {
-                    DiagnosticsHook.DebugMessage("b");
                     attackDirection = playerDirection();
                     ((Fists)weapon).Lunge(1, false);
                 }
@@ -352,58 +351,61 @@ namespace CampusCrawl.Characters
                 attackCooldown.Update(delta);
                 var time = (float)(delta.ElapsedGameTime.TotalSeconds);
                 var newPos = newPosition(time);
-                if (!followingPath)
+                if (!attacking)
                 {
-                    if (!playerInView(15, false))
+                    if (!followingPath)
                     {
-                        if (Scene.GridToTileLocation(newPos) != Scene.GridToTileLocation(Position))
+                        if (!playerInView(15, false))
                         {
-                            currentDistance++;
-                            if (!checkPosition(Scene.GridToTileLocation(newPos)))
+                            if (Scene.GridToTileLocation(newPos) != Scene.GridToTileLocation(Position))
+                            {
+                                currentDistance++;
+                                if (!checkPosition(Scene.GridToTileLocation(newPos)))
+                                {
+                                    direction = -direction;
+                                    currentDistance = 0;
+                                }
+                            }
+                            if (currentDistance == patrolDistance)
                             {
                                 direction = -direction;
                                 currentDistance = 0;
                             }
-                        }
-                        if (currentDistance == patrolDistance)
-                        {
-                            direction = -direction;
-                            currentDistance = 0;
-                        }
-                        Position = newPosition(time);
-                        doNotPickUp = null;
-                    }
-                }
-                else
-                {
-                    Point current = Scene.GridToTileLocation(Position);
-                    Point target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
-                    int xValue = 0;
-                    int yValue = 0;
-                    if (current.Equals(target))
-                    {
-                        if (completedPath.Count == 1)
-                        {
-                            followingPath = false;
-                        }
-                        else
-                        {
-                            completedPath.RemoveAt(0);
-                            target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
+                            Position = newPosition(time);
+                            doNotPickUp = null;
                         }
                     }
-                    if (followingPath)
+                    else
                     {
-                        if (current.X > target.X)
-                            xValue = -1;
-                        if (current.X < target.X)
-                            xValue = 1;
-                        if (current.Y > target.Y)
-                            yValue = -1;
-                        if (current.Y < target.Y)
-                            yValue = 1;
-                        Position = new Vector2(Position.X + (xValue * time * speed), Position.Y + (yValue * time * speed));
-                        doNotPickUp = null;
+                        Point current = Scene.GridToTileLocation(Position);
+                        Point target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
+                        int xValue = 0;
+                        int yValue = 0;
+                        if (current.Equals(target))
+                        {
+                            if (completedPath.Count == 1)
+                            {
+                                followingPath = false;
+                            }
+                            else
+                            {
+                                completedPath.RemoveAt(0);
+                                target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
+                            }
+                        }
+                        if (followingPath)
+                        {
+                            if (current.X > target.X)
+                                xValue = -1;
+                            if (current.X < target.X)
+                                xValue = 1;
+                            if (current.Y > target.Y)
+                                yValue = -1;
+                            if (current.Y < target.Y)
+                                yValue = 1;
+                            Position = new Vector2(Position.X + (xValue * time * speed), Position.Y + (yValue * time * speed));
+                            doNotPickUp = null;
+                        }
                     }
                 }
             }

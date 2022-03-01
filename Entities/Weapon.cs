@@ -117,7 +117,7 @@ namespace CampusCrawl.Entities
 
             Point currentTile = Scene.GridToTileLocation(newPos);
             bool hit = false;
-            var enemies = Scene.GameObjects.Where(x => x is Character).ToArray();
+            var enemies = Scene.GameObjects.Where(x => x is Player).ToArray();
             if (player)
             {
                 enemies = Scene.GameObjects.Where(x => x is Enemy).ToArray();
@@ -151,7 +151,7 @@ namespace CampusCrawl.Entities
                 character.attackDirection = character.mouseDirection();
             }
             Point currentTile = Scene.GridToTileLocation(character.Position);
-            var enemies = Scene.GameObjects.Where(x => x is Character).ToArray();
+            var enemies = Scene.GameObjects.Where(x => x is Player).ToArray();
             if (player)
             {
                 enemies = Scene.GameObjects.Where(x => x is Enemy).ToArray();

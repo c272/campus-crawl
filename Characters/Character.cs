@@ -202,18 +202,18 @@ namespace CampusCrawl.Characters
                 if (attacking)
                 {
 
-                    if(!weapon.Attack(true,true))
+                    if(!weapon.Attack(true,!isEnemy))
                     {
                         
                         attacking = false;
                         pushStats.reset();
                     }
                 }
+
                 pushEffect(time);
             } else
             {
-                if(attacking)
-                    weapon.Attack(true,true);
+                attacking = false;
                 if (!isEnemy)
                 {
                     Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
@@ -241,7 +241,7 @@ namespace CampusCrawl.Characters
                 }
                 if (attacking)
                 {
-                    if (!weapon.checkAttack(new Vector2(Position.X + xPushAmt, Position.Y + yPushAmt),true))
+                    if (!weapon.checkAttack(new Vector2(Position.X + xPushAmt, Position.Y + yPushAmt),!isEnemy))
                     {
                         attacking = false;
                         pushStats.reset();
