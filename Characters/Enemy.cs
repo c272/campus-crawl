@@ -326,8 +326,6 @@ namespace CampusCrawl.Characters
             }
             return direction;
         }
-        bool knockBacked = false;
-
         public float[] playerDirection()
         {
             var direction = new float[2] { 0, 0 };
@@ -354,7 +352,8 @@ namespace CampusCrawl.Characters
 
         private void attack()
         {
-            weapon = new Fists(this, "dave.png");
+            weapon = new Fists(this, "Assets/dave.png");
+            //weapon.Scene = this.Scene;
             if (playerInView(37,true) && player.attacking == false)
             {
                 if (weapon != null)

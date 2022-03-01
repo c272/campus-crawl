@@ -110,7 +110,7 @@ namespace CampusCrawl.Entities
             }
             foreach (GameObject enemy in enemies)
             {
-                Enemy currentEnemy = (Enemy)enemy;
+                Character currentEnemy = (Character)enemy;
                 Point enemyPos = new Point((int)currentEnemy.Position.X, (int)currentEnemy.Position.Y);
                 Point enemyTile = Scene.GridToTileLocation(enemy.Position);
                 Point currentPos = new Point((int)newPos.X, (int)newPos.Y);
