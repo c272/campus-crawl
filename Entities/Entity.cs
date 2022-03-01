@@ -40,6 +40,12 @@ namespace CampusCrawl.Entities
             RemoveComponent(collider);
         }
 
+        public virtual void PutDown()
+        {
+            AddComponent(sprite);
+            AddComponent(collider);
+        }
+
         public void Spawn(Vector2 playerPosition)
         {
             Point playerLocation = Scene.GridToTileLocation(playerPosition);

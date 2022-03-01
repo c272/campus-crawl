@@ -12,6 +12,7 @@ using tileEngine.SDK.Audio;
 using tileEngine.SDK.Input;
 using tileEngine.SDK.GUI;
 using tileEngine.SDK.GUI.Elements;
+using CampusCrawl.Entities.Weapons;
 
 namespace CampusCrawl
 {
@@ -32,7 +33,7 @@ namespace CampusCrawl
             mainPlayer.SetLayer("Objects");
             UI.Initialize("Fonts/MakanHati-vmp94.ttf");
             BaseScene scene = (BaseScene)TileEngine.Instance.GetScene();
-            mainPlayer.spawnRandomWeapon();
+            mainPlayer.CreateAndSetWeapon(new Fists(mainPlayer));
         }
 
         public override void Shutdown()

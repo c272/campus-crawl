@@ -34,9 +34,10 @@ namespace CampusCrawl.Characters
         public Label healthCount;
         public Player()
         {
+            playerModelPath = "Assets/TestModel.png";
             sprite = new SpriteComponent()
             {
-                Texture = AssetManager.AttemptLoad<Texture2D>(1215427970),
+                Texture = AssetManager.AttemptLoad<Texture2D>(playerModelPath),
                 Position = new Vector2(-16, -16),
                 Scale = new Vector2(1, 1)
             };
@@ -80,7 +81,7 @@ namespace CampusCrawl.Characters
 
         public void spawnRandomWeapon()
         {
-            Fists e = new Fists(this, "Assets/TestModel.png");
+            Fists e = new Fists(this);
             e.Scene = Scene;
             e.SetLayer(Layer);
             e.Spawn(Position);

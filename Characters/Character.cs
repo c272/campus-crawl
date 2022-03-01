@@ -80,6 +80,8 @@ namespace CampusCrawl.Characters
         protected SoundReference damageSound;
         protected bool isEnemy = false;
         protected Weapon weapon;
+        protected Entity doNotPickUp;
+        public string playerModelPath;
 
         public Character()
         {
@@ -109,6 +111,23 @@ namespace CampusCrawl.Characters
             attacking = false;
             damageSound = TileEngine.Instance.Sound.LoadSound("Sound/testSound.mp3");
         }
+
+        public void CreateAndSetWeapon(Weapon weapon)
+        {
+            weapon.Scene = Scene;
+            weapon.SetLayer(Layer);
+            weapon.Spawn(Position);
+
+            weapon.PickedUp();
+            this.weapon = weapon;
+        }
+
+        public void DropCurrentWeapon()
+        {
+            doNotPickUp = weapon;
+            weapon.PutDown();
+        }
+
         public float[] mouseDirection()
         {
             var direction = new float[2] { 0, 0 };
@@ -155,10 +174,11 @@ namespace CampusCrawl.Characters
             var entities = Scene.GameObjects.Where(x => x is Entity).ToList();
             foreach (Entity entity in entities)
             {
-                if (Scene.GridToTileLocation(entity.Position) == Scene.GridToTileLocation(this.Position))
+                if (Scene.GridToTileLocation(entity.Position) == Scene.GridToTileLocation(this.Position) && entity != doNotPickUp)
                 {
-                    // This means, we have a weapon that we can pick up.
+                    // This means, we have an entity that we can pick up.
                     entity.PickedUp();
+
                     if (entity is Weapon)
                     {
                         weapon = (Weapon)entity;
@@ -190,14 +210,15 @@ namespace CampusCrawl.Characters
                     }
                 }
                 pushEffect(time);
-
-            } 
-            else
+            } else
             {
                 if(attacking)
                     weapon.Attack(true,true);
                 if (!isEnemy)
+                {
                     Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
+                    doNotPickUp = null;
+                }
             }
         }
 

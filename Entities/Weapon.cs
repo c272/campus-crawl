@@ -24,10 +24,10 @@ namespace CampusCrawl.Entities
         protected bool isAttacking = false;
 
         protected Character character;
-        public Weapon(Character character, string playerModel, string assetPath, string name) : base(assetPath)
+        public Weapon(Character character, string assetPath, string name) : base(assetPath)
         {
             this.character = character;
-            this.playerModel = playerModel;
+            this.playerModel = character.playerModelPath;
             string modelWithoutExtension = playerModel.Replace(".png", "");
             restingModel = modelWithoutExtension + "_" + name + "_Resting.png";
             attackedModel = modelWithoutExtension + "_" + name + "_Attacked.png";
@@ -44,6 +44,20 @@ namespace CampusCrawl.Entities
                 Scale = new Vector2(1, 1)
             });
         }
+
+        public override void PutDown()
+        {
+            character.UpdateSprite(new tileEngine.SDK.Components.SpriteComponent
+            {
+                Texture = AssetManager.AttemptLoad<Texture2D>(playerModel),
+                Position = new Vector2(-16, -16),
+                Scale = new Vector2(1, 1)
+            });
+
+            Position = character.Position;
+            base.PutDown();
+        }
+
         public bool canAttack(Point enemyTile, Point playerTile, float[] mouseDirection)
         {
             if (mouseDirection[0] == -1)

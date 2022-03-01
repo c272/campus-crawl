@@ -59,6 +59,7 @@ namespace CampusCrawl.Characters
 
         public Enemy(string directionName, float distance, Vector2 location)
         {
+            playerModelPath = "Assets/dave.png";
             isEnemy = true;
             if (directionName == "up" || directionName == "left")
                 direction = -1;
@@ -69,7 +70,7 @@ namespace CampusCrawl.Characters
             Position = location;
             sprite = new SpriteComponent()
             {
-                Texture = AssetManager.AttemptLoad<Texture2D>(-1280955819),
+                Texture = AssetManager.AttemptLoad<Texture2D>(playerModelPath),
                 Position = new Vector2(-16, -16),
                 Scale = new Vector2(1, 1)
             };
@@ -336,7 +337,6 @@ namespace CampusCrawl.Characters
             }
         }
 
-
         public override void Update(GameTime delta)
         {
             base.Update(delta);
@@ -372,6 +372,7 @@ namespace CampusCrawl.Characters
                             currentDistance = 0;
                         }
                         Position = newPosition(time);
+                        doNotPickUp = null;
                     }
                 }
                 else
@@ -403,6 +404,7 @@ namespace CampusCrawl.Characters
                         if (current.Y < target.Y)
                             yValue = 1;
                         Position = new Vector2(Position.X + (xValue * time * speed), Position.Y + (yValue * time * speed));
+                        doNotPickUp = null;
                     }
                 }
             }

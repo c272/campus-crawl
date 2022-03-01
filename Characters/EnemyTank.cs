@@ -13,7 +13,8 @@ namespace CampusCrawl.Characters
     {
         public EnemyTank(string directionName, float distance, Vector2 location) : base(directionName, distance, location)
         {
-            sprite.Texture = AssetManager.AttemptLoad<Texture2D>("Assets/daveTank.png");
+            playerModelPath = "Assets/daveTank.png";
+            sprite.Texture = AssetManager.AttemptLoad<Texture2D>(playerModelPath);
             speed = 50;
             damage = 40;
         }
