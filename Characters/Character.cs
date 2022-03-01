@@ -68,6 +68,7 @@ namespace CampusCrawl.Characters
     }
     public class Character : GameObject
     {
+        protected bool followingPath = false;
         protected BoxColliderComponent collider;
         protected SpriteComponent sprite;
         protected float speed;
@@ -188,14 +189,16 @@ namespace CampusCrawl.Characters
                         pushStats.reset();
                     }
                 }
-                pushEffect(time);
+                if(!followingPath)
+                    pushEffect(time);
 
             } 
             else
             {
                 if(attacking)
                     weapon.Attack(true,true);
-                Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
+                if (!followingPath)
+                    Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
             }
         }
 

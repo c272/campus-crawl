@@ -26,7 +26,6 @@ namespace CampusCrawl.Characters
         protected List<Node> openNodes;
         protected List<Node> closedNodes;
         protected List<Node> completedPath;
-        protected bool followingPath = false;
         protected Timer timerPath;
         protected Timer attackCooldown;
         protected Player player;
@@ -298,34 +297,6 @@ namespace CampusCrawl.Characters
             }
         }
 
-        private float[] knockBackDirection()
-        {
-            var direction = new float[2] {0,0};
-            var playerTile = Scene.GridToTileLocation(player.Position);
-            var currentTile = Scene.GridToTileLocation(Position);
-            if(currentTile == playerTile)   //if they are on the same tile
-            {
-                playerTile = new Point((int)player.Position.X,(int)player.Position.Y);
-                currentTile = new Point((int)Position.X, (int)Position.Y);
-            }
-            if(playerTile.X - currentTile.X > 0)
-            {
-                direction[0] = 2.5f;
-            }
-            if (playerTile.X - currentTile.X < 0)
-            {
-                direction[0] = -2.5f;
-            }
-            if (playerTile.Y - currentTile.Y > 0)
-            {
-                direction[1] = 2.5f;
-            }
-            if (playerTile.Y - currentTile.Y < 0)
-            {
-                direction[1] = -2.5f;
-            }
-            return direction;
-        }
         public float[] playerDirection()
         {
             var direction = new float[2] { 0, 0 };
