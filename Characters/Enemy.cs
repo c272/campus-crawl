@@ -74,7 +74,7 @@ namespace CampusCrawl.Characters
                 Scale = new Vector2(1, 1)
             };
             AddComponent(sprite);
-            attackCooldown = new Timer(5f);
+            attackCooldown = new Timer(0.5f);
             attackCooldown.OnTick += attack;
             attackCooldown.Loop = true;
             timerPath = new Timer(0.5f);
@@ -324,13 +324,14 @@ namespace CampusCrawl.Characters
 
         private void attack()
         {
-            if (playerInView(40,true))// && player.attacking == false)
+            if (playerInView(40,true) && player.pushStats.isPushed() == false)
             {
-                attacking = true;
+                //attacking = true;
                 if (weapon != null)
                 {
                     attackDirection = playerDirection();
-                    ((Fists)weapon).Lunge(1, false);
+                    weapon.Attack(false, false);
+                    //((Fists)weapon).Lunge(1, false);
                 }
             }
         }

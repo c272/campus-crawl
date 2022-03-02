@@ -74,7 +74,7 @@ namespace CampusCrawl.Characters
         protected float speed;
         public float health;
         protected bool attacking;
-        protected Push pushStats = new Push(0, 0);
+        public Push pushStats = new Push(0, 0);
         public float[] attackDirection;
         protected float damage;
         protected SoundReference damageSound;
