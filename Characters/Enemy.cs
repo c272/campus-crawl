@@ -28,6 +28,7 @@ namespace CampusCrawl.Characters
         protected List<Node> completedPath;
         protected Timer timerPath;
         protected Timer attackCooldown;
+        protected Timer heavyAttackCooldown;
         protected Player player;
         protected int scoreValue = 100;
         public struct Node
@@ -74,6 +75,8 @@ namespace CampusCrawl.Characters
                 Scale = new Vector2(1, 1)
             };
             AddComponent(sprite);
+            heavyAttackCooldown = new Timer(5f);
+            heavyAttackCooldown.OnTick += heavyAttack;
             attackCooldown = new Timer(0.5f);
             attackCooldown.OnTick += attack;
             attackCooldown.Loop = true;
@@ -83,6 +86,7 @@ namespace CampusCrawl.Characters
             speed = 100;
             health = 100;
             damage = 10;
+
         }
 
         public override void Initialize()
@@ -96,7 +100,7 @@ namespace CampusCrawl.Characters
             AddComponent(collider);
             timerPath.Start();
             attackCooldown.Start();
-            
+            heavyAttackCooldown.Start();
         }
         /*
          * Checks if a tile has collision at set point
@@ -324,7 +328,7 @@ namespace CampusCrawl.Characters
 
         private void attack()
         {
-            if (playerInView(40,true) && player.pushStats.isPushed() == false)
+            if (playerInView(40,true) && player.pushStats.isPushed() == false && player.attacking == false)
             {
                 //attacking = true;
                 if (weapon != null)
@@ -332,6 +336,21 @@ namespace CampusCrawl.Characters
                     attackDirection = playerDirection();
                     weapon.Attack(false, false);
                     //((Fists)weapon).Lunge(1, false);
+                }
+            }
+        }
+
+        private void heavyAttack()
+        {
+            if (playerInView(90, true) && player.pushStats.isPushed() == false && player.attacking == false)
+            {
+                attacking = true;
+                if (weapon != null)
+                {
+                    attackDirection = playerDirection();
+                    ((Fists)weapon).Lunge(1f, false);
+                    heavyAttackCooldown.Reset();
+                   
                 }
             }
         }
@@ -350,7 +369,16 @@ namespace CampusCrawl.Characters
                 {
                     player = (Player)Scene.GameObjects.Where(x => x is Player).FirstOrDefault();
                 }
-
+                if (!pushStats.isPushed() && attacking)
+                {
+                    attacking = false;
+                }/*
+                if(!heavyAttackCooldown.Running)
+                {
+                    DiagnosticsHook.DebugMessage("aaaaa");
+                    heavyAttack();
+                }
+                heavyAttackCooldown.Update(delta);*/
                 timerPath.Update(delta);
                 attackCooldown.Update(delta);
                 var time = (float)(delta.ElapsedGameTime.TotalSeconds);

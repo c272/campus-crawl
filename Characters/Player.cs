@@ -49,7 +49,7 @@ namespace CampusCrawl.Characters
             attackCooldown.Loop = true;
             speed = 110;
             health = 100;
-            damage = 20;
+            damage = 5;
             healthBar = new ProgressBar(new Vector2(200, 32));
             healthBar.ForegroundColour = Color.Green;
             healthBar.BackgroundColour = Color.Red;
@@ -99,6 +99,7 @@ namespace CampusCrawl.Characters
         {
             Position = Scene.TileToGridLocation(spawnPoint);
             health = 100;
+            attacking = false;
             pushStats.reset();
             if(oneLife)
             {
@@ -195,14 +196,13 @@ namespace CampusCrawl.Characters
                 handleSecondaryAttack(mouseState);
             }
         }
-
         public override void Update(GameTime delta)
         {
             base.Update(delta);
             var time = (float)(delta.ElapsedGameTime.TotalSeconds);
             var movement = InputHandler.GetEvent("Movement");
             var mouseState = Mouse.GetState();
-
+            DiagnosticsHook.DebugMessage(damage.ToString());
 
             if(health <= 0)
             {
@@ -210,6 +210,10 @@ namespace CampusCrawl.Characters
             } else
             {
                 handleAttack(mouseState);
+            }
+            if (!pushStats.isPushed()&&attacking)
+            {
+                attacking=false;
             }
             healthBar.Value = health / 100;
             healthCount.Text = health.ToString() + " / " + 100;

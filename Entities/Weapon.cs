@@ -60,6 +60,10 @@ namespace CampusCrawl.Entities
 
         public bool canAttack(Point enemyTile, Point playerTile, float[] mouseDirection)
         {
+            if(mouseDirection == null)
+            {
+                return false;
+            }
             if (mouseDirection[0] == -1)
             {
                 // Check X for the radius.
@@ -130,7 +134,10 @@ namespace CampusCrawl.Entities
                 Point currentPos = new Point((int)newPos.X, (int)newPos.Y);
                 if ((currentTile.X - enemyTile.X <= character.attackDirection[0] && currentTile.Y - enemyTile.Y <= character.attackDirection[1]) || enemyTile == currentTile)
                 {
-                    currentEnemy.onDamage(damage, character.attackDirection, (int)(knockback * 1.5));
+                    if(player)
+                        currentEnemy.onDamage(damage, character.attackDirection, (int)(knockback * 1.5));
+                    else
+                        currentEnemy.onDamage(damage*character.damage, character.attackDirection, (int)(knockback * 1.5));
                     hit = true;
                 }
                 else if (Math.Abs(enemyPos.X - currentPos.X) < 40 && Math.Abs(enemyPos.Y - currentPos.Y) < 40)
@@ -142,6 +149,7 @@ namespace CampusCrawl.Entities
             if (hit) { return true; }
             return false;
         }
+
 
         public virtual bool Attack(bool lungeAttack,bool player)
         {
@@ -163,7 +171,7 @@ namespace CampusCrawl.Entities
                 {
                     if (Math.Abs(enemy.Position.X - character.Position.X) < 40 && Math.Abs(enemy.Position.Y - character.Position.Y) < 40)
                     {
-                        enemy.onDamage(damage, character.attackDirection, (int)(knockback * 1.5));
+                       enemy.onDamage(damage * character.damage, character.attackDirection, (int)(knockback * 1.5));
                         isAttacking = false;
                     }
                 }
@@ -171,7 +179,7 @@ namespace CampusCrawl.Entities
                 {
                     if (canAttack(enemyTile, currentTile, character.attackDirection))
                     {
-                        enemy.onDamage(damage, character.attackDirection, knockback);
+                        enemy.onDamage(damage * character.damage, character.attackDirection, knockback);
                         isAttacking = false;
                     }
                 }

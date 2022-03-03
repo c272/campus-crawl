@@ -76,7 +76,7 @@ namespace CampusCrawl.Characters
         protected bool attacking;
         public Push pushStats = new Push(0, 0);
         public float[] attackDirection;
-        protected float damage;
+        public float damage;
         protected SoundReference damageSound;
         protected bool isEnemy = false;
         protected Weapon weapon;
@@ -194,9 +194,11 @@ namespace CampusCrawl.Characters
             var movement = InputHandler.GetEvent("Movement");
 
             // Code to pick up entities
-            scanAndPickUpEntities();
+            if(weapon == null)
+                scanAndPickUpEntities();
 
             // Code to move/push
+            pushStats.checkPush();
             if (pushStats.isPushed())
             {
                 if (attacking)

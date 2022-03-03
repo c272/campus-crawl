@@ -16,7 +16,7 @@ namespace CampusCrawl.Characters
             playerModelPath = "Assets/daveTank.png";
             sprite.Texture = AssetManager.AttemptLoad<Texture2D>(playerModelPath);
             speed = 50;
-            damage = 40;
+            damage = 20;
             scoreValue = 150;
         }
     }
