@@ -89,10 +89,8 @@ namespace CampusCrawl.Characters
 
         public void spawnRandomWeapon()
         {
-            Fists e = new Fists(this);
-            e.Scene = Scene;
-            e.SetLayer(Layer);
-            e.Spawn(Position);
+            Fists e = new Fists();
+            e.SetCharacter(this);
         }
 
         public void respawn()

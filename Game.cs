@@ -33,7 +33,7 @@ namespace CampusCrawl
             mainPlayer.SetLayer("Objects");
             UI.Initialize("Fonts/MakanHati-vmp94.ttf");
             BaseScene scene = (BaseScene)TileEngine.Instance.GetScene();
-            mainPlayer.CreateAndSetWeapon(new Fists(mainPlayer));
+            mainPlayer.CreateAndSetWeapon(new Fists());
         }
 
         public override void Shutdown()

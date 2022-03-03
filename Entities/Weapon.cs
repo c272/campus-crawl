@@ -24,13 +24,21 @@ namespace CampusCrawl.Entities
         protected bool isAttacking = false;
 
         protected Character character;
-        public Weapon(Character character, string assetPath, string name) : base(assetPath)
+        public Weapon(string assetPath, string name) : base(assetPath)
         {
-            this.character = character;
             this.playerModel = character.playerModelPath;
             string modelWithoutExtension = playerModel.Replace(".png", "");
             restingModel = modelWithoutExtension + "_" + name + "_Resting.png";
             attackedModel = modelWithoutExtension + "_" + name + "_Attacked.png";
+        }
+
+        public void SetCharacter(Character character)
+        {
+            this.character = character;
+            if (character != null)
+            {
+                Initialise(character.Scene, character.Layer);
+            }
         }
 
         public override void PickedUp()

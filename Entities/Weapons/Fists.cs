@@ -14,7 +14,7 @@ namespace CampusCrawl.Entities.Weapons
     internal class Fists : Weapon
     {
         int lungeSize = 10;
-        public Fists(Character character) : base(character, "Assets/Fists.png", "Fists")
+        public Fists() : base("Assets/Fists.png", "Fists")
         {
             damage = 1;
             range = 1;
