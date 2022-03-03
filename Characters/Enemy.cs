@@ -29,7 +29,7 @@ namespace CampusCrawl.Characters
         protected Timer timerPath;
         protected Timer attackCooldown;
         protected Player player;
-
+        protected int scoreValue = 100;
         public struct Node
         {
             public Node(int distanceFromStart, int distanceFromEnd, int target, Point relativeLocation, List<Node> path)
@@ -340,7 +340,10 @@ namespace CampusCrawl.Characters
         {
             base.Update(delta);
             if (health <= 0)
+            {
                 Scene = null;
+                player.score += scoreValue;
+            }
             else
             {
                 if (player == null)

@@ -17,6 +17,7 @@ namespace CampusCrawl.Characters
             sprite.Texture = AssetManager.AttemptLoad<Texture2D>(playerModelPath);
             speed = 50;
             damage = 40;
+            scoreValue = 150;
         }
     }
 }

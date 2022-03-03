@@ -32,6 +32,8 @@ namespace CampusCrawl.Characters
         MouseInputHandler mouse;
         public ProgressBar healthBar;
         public Label healthCount;
+        public float score = 0f;
+        public Label scoreCount;
         public Player()
         {
             playerModelPath = "Assets/TestModel.png";
@@ -55,8 +57,14 @@ namespace CampusCrawl.Characters
             healthCount = new Label();
             healthCount.FontSize = 32;
             healthCount.Text = health.ToString() + " / " + 100;
+            scoreCount = new Label();
+            scoreCount.FontSize = 32;
+            scoreCount.Colour = Color.Black;
+            scoreCount.Text = "Score: " + score.ToString();
+            scoreCount.Anchor = UIAnchor.Top | UIAnchor.Center;
             UI.AddElement(healthBar);
             UI.AddElement(healthCount);
+            UI.AddElement(scoreCount);
         }
 
         public override void Initialize()
@@ -95,6 +103,7 @@ namespace CampusCrawl.Characters
             if(oneLife)
             {
                 var enemies = Scene.GameObjects.Where(x => x is Enemy);
+                score = 0;
                 foreach(var enemy in enemies.ToList())
                 {
                     enemy.Scene = null;
@@ -204,6 +213,7 @@ namespace CampusCrawl.Characters
             }
             healthBar.Value = health / 100;
             healthCount.Text = health.ToString() + " / " + 100;
+            scoreCount.Text = "Score: " + score.ToString();
             Scene.LookAt(Position);
         }
     }
