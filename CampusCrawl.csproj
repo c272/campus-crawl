@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="Characters\Character.cs" />
     <Compile Include="Characters\Enemy.cs" />
+    <Compile Include="Characters\EnemySprint.cs" />
     <Compile Include="Characters\EnemyTank.cs" />
     <Compile Include="Characters\Player.cs" />
     <Compile Include="Entities\Entity.cs" />

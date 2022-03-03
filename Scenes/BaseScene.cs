@@ -46,9 +46,11 @@ namespace CampusCrawl.Scenes
                 var index = random.Next(spawnableTiles.Count);
                 var enemyPos = spawnableTiles[index];
                 spawnableTiles.RemoveAt(index);
-                var newEnemy = new Enemy(directions[random.Next(directions.Count())], random.Next(10), TileToGridLocation(enemyPos));
+                var newEnemy = new Enemy(directions[random.Next(directions.Count())], random.Next(30), TileToGridLocation(enemyPos));
                 if (enemyType == 1)
                     newEnemy = new EnemyTank(directions[random.Next(directions.Count())], random.Next(10), TileToGridLocation(enemyPos));
+                if(enemyType == 2)
+                    newEnemy = new EnemySprint(directions[random.Next(directions.Count())], random.Next(30), TileToGridLocation(enemyPos));
                 TileEngine.Instance.GetScene().AddObject(newEnemy);
                 newEnemy.SetLayer("Objects");
                 newEnemy.CreateAndSetWeapon(new Fists(newEnemy));

@@ -56,6 +56,7 @@ namespace CampusCrawl.Scenes
                     player.health += 30;
             spawnEnemy(waveCounter*4, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer,0);
             spawnEnemy(waveCounter, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer, 1);
+            spawnEnemy(waveCounter, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer, 2);
             //make it so it spawns different enemy types at higher waves - need different enemy types
         }
 
