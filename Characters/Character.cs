@@ -217,11 +217,6 @@ namespace CampusCrawl.Characters
             } else
             {
                 attacking = false;
-                if (!isEnemy)
-                {
-                    Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
-                    doNotPickUp = null;
-                }
             }
         }
 

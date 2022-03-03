@@ -144,6 +144,7 @@ namespace CampusCrawl.Characters
 
         private int rightButtonHeld = 0;
         private bool rightButtonReleased = false;
+        private bool isLunging = false;
         private void handleSecondaryAttack(MouseState mouseState)
         {
             if (rightButtonHeld > 0 && mouseState.RightButton == ButtonState.Released)
@@ -160,6 +161,7 @@ namespace CampusCrawl.Characters
                     float yMovement = prepareDirection[1];
 
                     Position = new Vector2(Position.X + xMovement, Position.Y + yMovement);
+                    isLunging = true;
                 }
             }
             else if (rightButtonReleased)
@@ -174,6 +176,7 @@ namespace CampusCrawl.Characters
                     });
                     attacking = true;
                     ((Fists)weapon).Lunge(clamp(rightButtonHeld / 10, 0, 20),true);
+                    isLunging = false;
                 }
                 rightButtonHeld = 0;
                 rightButtonReleased = false;
@@ -209,10 +212,17 @@ namespace CampusCrawl.Characters
             {
                 handleAttack(mouseState);
             }
-            if (!pushStats.isPushed()&&attacking)
+            if (!pushStats.isPushed() && attacking)
             {
                 attacking=false;
             }
+
+            if (!pushStats.isPushed() && !isLunging)
+            {
+                Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
+                doNotPickUp = null;
+            }
+
             healthBar.Value = health / 100;
             healthCount.Text = health.ToString() + " / " + 100;
             scoreCount.Text = "Score: " + score.ToString();
