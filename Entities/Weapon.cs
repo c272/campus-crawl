@@ -26,10 +26,7 @@ namespace CampusCrawl.Entities
         protected Character character;
         public Weapon(string assetPath, string name) : base(assetPath)
         {
-            this.playerModel = character.playerModelPath;
-            string modelWithoutExtension = playerModel.Replace(".png", "");
-            restingModel = modelWithoutExtension + "_" + name + "_Resting.png";
-            attackedModel = modelWithoutExtension + "_" + name + "_Attacked.png";
+
         }
 
         public void SetCharacter(Character character)
@@ -38,6 +35,10 @@ namespace CampusCrawl.Entities
             if (character != null)
             {
                 Initialise(character.Scene, character.Layer);
+                playerModel = character.playerModelPath;
+                string modelWithoutExtension = playerModel.Replace(".png", "");
+                restingModel = modelWithoutExtension + "_" + name + "_Resting.png";
+                attackedModel = modelWithoutExtension + "_" + name + "_Attacked.png";
             }
         }
 
