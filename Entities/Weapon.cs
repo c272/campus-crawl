@@ -26,7 +26,7 @@ namespace CampusCrawl.Entities
         protected Character character;
         public Weapon(string assetPath, string name) : base(assetPath)
         {
-
+            this.name = name;
         }
 
         public void SetCharacter(Character character)
