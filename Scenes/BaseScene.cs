@@ -53,7 +53,7 @@ namespace CampusCrawl.Scenes
                     newEnemy = new EnemySprint(directions[random.Next(directions.Count())], random.Next(30), TileToGridLocation(enemyPos));
                 TileEngine.Instance.GetScene().AddObject(newEnemy);
                 newEnemy.SetLayer("Objects");
-                newEnemy.CreateAndSetWeapon(new Fists(newEnemy));
+                newEnemy.CreateAndSetWeapon(new Fists());
             }
         }
 

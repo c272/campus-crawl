@@ -89,10 +89,8 @@ namespace CampusCrawl.Characters
 
         public void spawnRandomWeapon()
         {
-            Fists e = new Fists(this);
-            e.Scene = Scene;
-            e.SetLayer(Layer);
-            e.Spawn(Position);
+            Fists e = new Fists();
+            e.SetCharacter(this);
         }
 
         public void respawn()
@@ -146,6 +144,7 @@ namespace CampusCrawl.Characters
 
         private int rightButtonHeld = 0;
         private bool rightButtonReleased = false;
+        private bool isLunging = false;
         private void handleSecondaryAttack(MouseState mouseState)
         {
             if (rightButtonHeld > 0 && mouseState.RightButton == ButtonState.Released)
@@ -162,6 +161,7 @@ namespace CampusCrawl.Characters
                     float yMovement = prepareDirection[1];
 
                     Position = new Vector2(Position.X + xMovement, Position.Y + yMovement);
+                    isLunging = true;
                 }
             }
             else if (rightButtonReleased)
@@ -176,6 +176,7 @@ namespace CampusCrawl.Characters
                     });
                     attacking = true;
                     ((Fists)weapon).Lunge(clamp(rightButtonHeld / 10, 0, 20),true);
+                    isLunging = false;
                 }
                 rightButtonHeld = 0;
                 rightButtonReleased = false;
@@ -203,23 +204,40 @@ namespace CampusCrawl.Characters
             var movement = InputHandler.GetEvent("Movement");
             var mouseState = Mouse.GetState();
             DiagnosticsHook.DebugMessage(damage.ToString());
+            Vector2 mousePos = Scene.ToGridLocation(mouseState.Position);
+            Vector2 deltaPos = new Vector2((mousePos.X - Position.X), -(mousePos.Y - Position.Y));
+            DiagnosticsHook.DebugMessage(deltaPos.ToString());
 
-            if(health <= 0)
+            double personAngle = Math.Atan2(deltaPos.Y, deltaPos.X);
+            //double personAngle = Math.Atan(tanAngle);
+            //DiagnosticsHook.DebugMessage("Tan angle = " + tanAngle);
+            //DiagnosticsHook.DebugMessage("Person angle = " + personAngle);
+            float radianAngle = (float)((Math.PI / 180) * personAngle);
+            DiagnosticsHook.DebugMessage("Radian angle = " + radianAngle);
+            //sprite.Rotation = radianAngle;
+
+            if (health <= 0)
             {
                 respawn();
             } else
             {
                 handleAttack(mouseState);
             }
-            if (!pushStats.isPushed()&&attacking)
+            if (!pushStats.isPushed() && attacking)
             {
                 attacking=false;
             }
+
+            if (!pushStats.isPushed() && !isLunging)
+            {
+                Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
+                doNotPickUp = null;
+            }
+
             healthBar.Value = health / 100;
             healthCount.Text = health.ToString() + " / " + 100;
             scoreCount.Text = "Score: " + score.ToString();
             Scene.LookAt(Position);
         }
     }
-
 }

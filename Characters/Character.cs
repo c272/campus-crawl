@@ -114,8 +114,7 @@ namespace CampusCrawl.Characters
 
         public void CreateAndSetWeapon(Weapon weapon)
         {
-            weapon.Scene = Scene;
-            weapon.SetLayer(Layer);
+            weapon.SetCharacter(this);
             weapon.Spawn(Position);
 
             weapon.PickedUp();
@@ -178,10 +177,12 @@ namespace CampusCrawl.Characters
                 {
                     // This means, we have an entity that we can pick up.
                     entity.PickedUp();
+                    entity.Initialise(Scene, Layer);
 
                     if (entity is Weapon)
                     {
                         weapon = (Weapon)entity;
+                        weapon.SetCharacter(this);
                     }
                 }
             }
@@ -216,11 +217,6 @@ namespace CampusCrawl.Characters
             } else
             {
                 attacking = false;
-                if (!isEnemy)
-                {
-                    Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
-                    doNotPickUp = null;
-                }
             }
         }
 

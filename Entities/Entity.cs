@@ -29,6 +29,12 @@ namespace CampusCrawl.Entities
             AddComponent(sprite);
         }
 
+        public void Initialise(Scene scene, int layer)
+        {
+            Scene = scene;
+            SetLayer(layer);
+        }
+
         public void SetLocation(int x, int y)
         {
             Position = Scene.TileToGridLocation(new Point(x, y));

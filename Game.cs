@@ -31,7 +31,7 @@ namespace CampusCrawl
             TileEngine.Instance.GetScene().CameraPosition = new Vector2(-320, -320);
             mainPlayer.SetLayer("Objects");
             BaseScene scene = (BaseScene)TileEngine.Instance.GetScene();
-            mainPlayer.CreateAndSetWeapon(new Fists(mainPlayer));
+            mainPlayer.CreateAndSetWeapon(new Fists());
         }
         public override void Initialize()
         {
