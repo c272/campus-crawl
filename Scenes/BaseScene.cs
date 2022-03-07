@@ -14,6 +14,7 @@ namespace CampusCrawl.Scenes
     public abstract class BaseScene : Scene
     {
         public int waveCounter = 0;
+        public Boolean paused = false;
         public override void Initialize()
         {
             base.Initialize();

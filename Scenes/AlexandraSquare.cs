@@ -63,19 +63,22 @@ namespace CampusCrawl.Scenes
         public override void Update(GameTime delta)
         {
             base.Update(delta);
-            if (player == null)
+            if (!paused)
             {
-                player = (Player)this.GameObjects.Where(x => x is Player).FirstOrDefault();
+                if (player == null)
+                {
+                    player = (Player)this.GameObjects.Where(x => x is Player).FirstOrDefault();
+                }
+
+                var enemies = this.GameObjects.Where(x => x is Enemy);
+                waveInfo.Text = "Wave " + waveCounter.ToString() + "   Enemies left: " + enemies.Count().ToString();
+                if (this.GameObjects.Where(x => x is Enemy).FirstOrDefault() == null && TileEngine.Instance.GetScene() != null)
+                {
+                    waveCounter++;
+                    waveReset();
+                }
+                spawnCooldown.Update(delta);
             }
-            
-            var enemies = this.GameObjects.Where(x => x is Enemy);
-            waveInfo.Text = "Wave " + waveCounter.ToString() + "   Enemies left: " + enemies.Count().ToString();
-            if(this.GameObjects.Where(x => x is Enemy).FirstOrDefault() == null && TileEngine.Instance.GetScene() != null)
-            {
-                waveCounter++;
-                waveReset();
-            }
-            spawnCooldown.Update(delta);
             //...
         }
     }

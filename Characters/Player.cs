@@ -34,6 +34,10 @@ namespace CampusCrawl.Characters
         public Label healthCount;
         public float score = 0f;
         public Label scoreCount;
+        private RectangleButton restartButton;
+        private Boolean paused = false;
+        private Panel pausePanel;
+        public Label scoreLabel;
         public Player()
         {
             playerModelPath = "Assets/TestModel.png";
@@ -95,23 +99,70 @@ namespace CampusCrawl.Characters
 
         public void respawn()
         {
-            Position = Scene.TileToGridLocation(spawnPoint);
-            health = 100;
-            attacking = false;
-            pushStats.reset();
             if(oneLife)
             {
                 var enemies = Scene.GameObjects.Where(x => x is Enemy);
-                score = 0;
                 foreach(var enemy in enemies.ToList())
                 {
                     enemy.Scene = null;
                 }
                 var scene = (Scenes.BaseScene)Scene;
                 scene.waveCounter = 0;
+                scene.paused = true;
+                paused = true;
+                makePauseMenu();
+            }
+            else
+            {
+                Position = Scene.TileToGridLocation(spawnPoint);
+                health = 100;
+                attacking = false;
+                pushStats.reset();
             }
         }
 
+        public void restart(Point location)
+        {
+            var scene = (Scenes.BaseScene)Scene;
+            scene.paused = false;
+            paused = false;
+            UI.RemoveElement(restartButton);
+            UI.RemoveElement(pausePanel);
+            UI.RemoveElement(scoreLabel);
+            score = 0;
+            Position = Scene.TileToGridLocation(spawnPoint);
+            health = 100;
+            attacking = false;
+            pushStats.reset();
+        }
+
+        public void makePauseMenu()
+        {
+            pausePanel = new Panel();
+            pausePanel.Colour = Color.PaleVioletRed;
+            pausePanel.Size = new Vector2(500, 250);
+            pausePanel.Anchor = UIAnchor.Center;
+            pausePanel.OnClick += restart;
+            scoreLabel = new Label();
+            scoreLabel.Text = "You have been defeated\nYou scored: " + score.ToString();
+            scoreLabel.Anchor = UIAnchor.Center;
+            scoreLabel.FontSize = 32;
+            scoreLabel.Colour = Color.Black;
+            scoreLabel.Offset = new Vector2(0, -70);
+            restartButton = new RectangleButton();
+            restartButton.OnClick += restart;
+            restartButton.Anchor = UIAnchor.Center;
+            restartButton.BorderColour = Color.Black;
+            restartButton.BackgroundColour = Color.Green;
+            Label label = new Label();
+            label.Text = "Restart game";
+            label.FontSize = 32;
+            label.Colour = Color.Black;
+            restartButton.Label = label;
+            UI.AddElement(pausePanel);
+            UI.AddElement(restartButton);
+            UI.AddElement(scoreLabel);
+        }
 
         public void cooldown()
         {
@@ -200,44 +251,48 @@ namespace CampusCrawl.Characters
         public override void Update(GameTime delta)
         {
             base.Update(delta);
-            var time = (float)(delta.ElapsedGameTime.TotalSeconds);
-            var movement = InputHandler.GetEvent("Movement");
-            var mouseState = Mouse.GetState();
-            DiagnosticsHook.DebugMessage(damage.ToString());
-            Vector2 mousePos = Scene.ToGridLocation(mouseState.Position);
-            Vector2 deltaPos = new Vector2((mousePos.X - Position.X), -(mousePos.Y - Position.Y));
-            DiagnosticsHook.DebugMessage(deltaPos.ToString());
-
-            double personAngle = Math.Atan2(deltaPos.Y, deltaPos.X);
-            //double personAngle = Math.Atan(tanAngle);
-            //DiagnosticsHook.DebugMessage("Tan angle = " + tanAngle);
-            //DiagnosticsHook.DebugMessage("Person angle = " + personAngle);
-            float radianAngle = (float)((Math.PI / 180) * personAngle);
-            DiagnosticsHook.DebugMessage("Radian angle = " + radianAngle);
-            //sprite.Rotation = radianAngle;
-
-            if (health <= 0)
+            if (!paused)
             {
-                respawn();
-            } else
-            {
-                handleAttack(mouseState);
+                var time = (float)(delta.ElapsedGameTime.TotalSeconds);
+                var movement = InputHandler.GetEvent("Movement");
+                var mouseState = Mouse.GetState();
+                DiagnosticsHook.DebugMessage(damage.ToString());
+                Vector2 mousePos = Scene.ToGridLocation(mouseState.Position);
+                Vector2 deltaPos = new Vector2((mousePos.X - Position.X), -(mousePos.Y - Position.Y));
+                DiagnosticsHook.DebugMessage(deltaPos.ToString());
+
+                double personAngle = Math.Atan2(deltaPos.Y, deltaPos.X);
+                //double personAngle = Math.Atan(tanAngle);
+                //DiagnosticsHook.DebugMessage("Tan angle = " + tanAngle);
+                //DiagnosticsHook.DebugMessage("Person angle = " + personAngle);
+                float radianAngle = (float)((Math.PI / 180) * personAngle);
+                DiagnosticsHook.DebugMessage("Radian angle = " + radianAngle);
+                //sprite.Rotation = radianAngle;
+
+                if (health <= 0)
+                {
+                    respawn();
+                }
+                else
+                {
+                    handleAttack(mouseState);
+                }
+                if (!pushStats.isPushed() && attacking)
+                {
+                    attacking = false;
+                }
+
+                if (!pushStats.isPushed() && !isLunging)
+                {
+                    Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
+                    doNotPickUp = null;
+                }
+
+                healthBar.Value = health / 100;
+                healthCount.Text = health.ToString() + " / " + 100;
+                scoreCount.Text = "Score: " + score.ToString();
+                Scene.LookAt(Position);
             }
-            if (!pushStats.isPushed() && attacking)
-            {
-                attacking=false;
-            }
-
-            if (!pushStats.isPushed() && !isLunging)
-            {
-                Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
-                doNotPickUp = null;
-            }
-
-            healthBar.Value = health / 100;
-            healthCount.Text = health.ToString() + " / " + 100;
-            scoreCount.Text = "Score: " + score.ToString();
-            Scene.LookAt(Position);
         }
     }
 }
