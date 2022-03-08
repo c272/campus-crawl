@@ -248,6 +248,31 @@ namespace CampusCrawl.Characters
                 handleSecondaryAttack(mouseState);
             }
         }
+
+        private Vector2 calculateLookAt()
+        {
+            Point pos = Scene.GridToTileLocation(Position);
+            Vector2 positionNew = Position;
+            if(positionNew.Y > 1)
+            {
+                positionNew.Y = Scene.TileToGridLocation(new Point(pos.X, 1)).Y;
+            }
+            if (positionNew.Y < -2)
+            {
+                positionNew.Y = Scene.TileToGridLocation(new Point(pos.X, -2)).Y;
+            }
+            if (pos.X < 0)
+            {
+                positionNew.X = Scene.TileToGridLocation(new Point(0, pos.Y)).X;
+            }
+            if (pos.X > 59)
+            {
+                positionNew.X = Scene.TileToGridLocation(new Point(60, pos.Y)).X;
+            }
+            
+            return positionNew;
+        }
+
         public override void Update(GameTime delta)
         {
             base.Update(delta);
@@ -256,7 +281,6 @@ namespace CampusCrawl.Characters
                 var time = (float)(delta.ElapsedGameTime.TotalSeconds);
                 var movement = InputHandler.GetEvent("Movement");
                 var mouseState = Mouse.GetState();
-                DiagnosticsHook.DebugMessage(damage.ToString());
                 Vector2 mousePos = Scene.ToGridLocation(mouseState.Position);
                 Vector2 deltaPos = new Vector2((mousePos.X - Position.X), -(mousePos.Y - Position.Y));
                 DiagnosticsHook.DebugMessage(deltaPos.ToString());
@@ -291,7 +315,7 @@ namespace CampusCrawl.Characters
                 healthBar.Value = health / 100;
                 healthCount.Text = health.ToString() + " / " + 100;
                 scoreCount.Text = "Score: " + score.ToString();
-                Scene.LookAt(Position);
+                Scene.LookAt(calculateLookAt());
             }
         }
     }
