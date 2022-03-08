@@ -155,7 +155,10 @@ namespace CampusCrawl.Entities
                     hit = true;
                 }
             }
-            if (hit) { return true; }
+            if (hit) {
+                character.attacking = false;
+                return true; 
+            }
             return false;
         }
 
@@ -180,7 +183,8 @@ namespace CampusCrawl.Entities
                 {
                     if (Math.Abs(enemy.Position.X - character.Position.X) < 40 && Math.Abs(enemy.Position.Y - character.Position.Y) < 40)
                     {
-                       enemy.onDamage(damage * character.damage, character.attackDirection, (int)(knockback * 1.5));
+                        DiagnosticsHook.DebugMessage("a");
+                        enemy.onDamage(damage * character.damage, character.attackDirection, (int)(knockback * 1.5));
                         isAttacking = false;
                     }
                 }
@@ -194,8 +198,10 @@ namespace CampusCrawl.Entities
                 }
             }
 
-            if(isAttacking)
+            if (isAttacking)
+            {
                 return false;
+            }
                 
             return true;
         }

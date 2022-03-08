@@ -77,6 +77,7 @@ namespace CampusCrawl.Characters
             AddComponent(sprite);
             heavyAttackCooldown = new Timer(5f);
             heavyAttackCooldown.OnTick += heavyAttack;
+            heavyAttackCooldown.Loop = true;
             attackCooldown = new Timer(0.5f);
             attackCooldown.OnTick += attack;
             attackCooldown.Loop = true;
@@ -328,7 +329,7 @@ namespace CampusCrawl.Characters
 
         private void attack()
         {
-            if (playerInView(40,true) && player.pushStats.isPushed() == false && player.attacking == false)
+            if (playerInView(40,true) && player.pushStats.isPushed() == false && player.attacking == false && !attacking)
             {
                 //attacking = true;
                 if (weapon != null)
@@ -342,14 +343,19 @@ namespace CampusCrawl.Characters
 
         private void heavyAttack()
         {
-            if (playerInView(90, true) && player.pushStats.isPushed() == false && player.attacking == false)
+           
+            if (playerInView(120, true) && player.pushStats.isPushed() == false && player.attacking == false)
             {
-                attacking = true;
                 if (weapon != null)
                 {
-                    attackDirection = playerDirection();
-                    ((Fists)weapon).Lunge(1f, false);
-                    heavyAttackCooldown.Reset();
+                    attacking = true;
+                    float[] prepareDirection = playerDirection();
+                    float xMovement = -prepareDirection[0];
+                    float yMovement = -prepareDirection[1];
+                    Position = new Vector2(Position.X + xMovement, Position.Y + yMovement);
+                    attackDirection = prepareDirection;
+                    ((Fists)weapon).Lunge(0.04f, false);
+                    //heavyAttackCooldown.Reset();
                    
                 }
             }
@@ -372,13 +378,8 @@ namespace CampusCrawl.Characters
                 if (!pushStats.isPushed() && attacking)
                 {
                     attacking = false;
-                }/*
-                if(!heavyAttackCooldown.Running)
-                {
-                    DiagnosticsHook.DebugMessage("aaaaa");
-                    heavyAttack();
                 }
-                heavyAttackCooldown.Update(delta);*/
+                heavyAttackCooldown.Update(delta);
                 timerPath.Update(delta);
                 attackCooldown.Update(delta);
                 var time = (float)(delta.ElapsedGameTime.TotalSeconds);

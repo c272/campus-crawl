@@ -73,7 +73,7 @@ namespace CampusCrawl.Characters
         protected SpriteComponent sprite;
         protected float speed;
         public float health;
-        protected bool attacking;
+        public bool attacking;
         public Push pushStats = new Push(0, 0);
         public float[] attackDirection;
         public float damage;
@@ -156,7 +156,6 @@ namespace CampusCrawl.Characters
 
         public void PushSelf(int x, int y)
         {
-            DiagnosticsHook.DebugMessage("Pushing self");
             pushStats.setPush(x, y);
         }
 
@@ -202,15 +201,16 @@ namespace CampusCrawl.Characters
             pushStats.checkPush();
             if (pushStats.isPushed())
             {
+                DiagnosticsHook.DebugMessage("a");
                 if (attacking)
                 {
-
+                    /*
                     if(!weapon.Attack(true,!isEnemy))
                     {
-                        
+                        DiagnosticsHook.DebugMessage("b");
                         attacking = false;
                         pushStats.reset();
-                    }
+                    }*/
                 }
 
                 pushEffect(time);
@@ -241,6 +241,7 @@ namespace CampusCrawl.Characters
                 {
                     if (!weapon.checkAttack(new Vector2(Position.X + xPushAmt, Position.Y + yPushAmt),!isEnemy))
                     {
+                        DiagnosticsHook.DebugMessage("d");
                         attacking = false;
                         pushStats.reset();
                     }
