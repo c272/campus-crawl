@@ -201,7 +201,6 @@ namespace CampusCrawl.Characters
             pushStats.checkPush();
             if (pushStats.isPushed())
             {
-                DiagnosticsHook.DebugMessage("a");
                 if (attacking)
                 {
                     /*

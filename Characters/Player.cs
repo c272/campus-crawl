@@ -177,7 +177,8 @@ namespace CampusCrawl.Characters
                 {
                     Texture = AssetManager.AttemptLoad<Texture2D>(weapon.attackedModel),
                     Position = new Vector2(-16, -16),
-                    Scale = new Vector2(1, 1)
+                    Scale = new Vector2(1, 1),
+                    Rotation = sprite.Rotation
                 });
                 weapon.Attack(false,true);
             }
@@ -188,7 +189,8 @@ namespace CampusCrawl.Characters
                 {
                     Texture = AssetManager.AttemptLoad<Texture2D>(weapon.restingModel),
                     Position = new Vector2(-16, -16),
-                    Scale = new Vector2(1, 1)
+                    Scale = new Vector2(1, 1),
+                    Rotation = sprite.Rotation
                 });
             }
         }
@@ -223,7 +225,8 @@ namespace CampusCrawl.Characters
                     {
                         Texture = AssetManager.AttemptLoad<Texture2D>(weapon.attackedModel),
                         Position = new Vector2(-16, -16),
-                        Scale = new Vector2(1, 1)
+                        Scale = new Vector2(1, 1),
+                        Rotation = sprite.Rotation
                     });
                     attacking = true;
                     ((Fists)weapon).Lunge(clamp(rightButtonHeld / 10, 0, 20),true);
@@ -235,7 +238,8 @@ namespace CampusCrawl.Characters
                 {
                     Texture = AssetManager.AttemptLoad<Texture2D>(weapon.restingModel),
                     Position = new Vector2(-16, -16),
-                    Scale = new Vector2(1, 1)
+                    Scale = new Vector2(1, 1),
+                    Rotation = sprite.Rotation
                 });
             }
         }
@@ -284,16 +288,16 @@ namespace CampusCrawl.Characters
                 Vector2 mousePos = Scene.ToGridLocation(mouseState.Position);
                 Vector2 deltaPos = new Vector2((mousePos.X - Position.X), -(mousePos.Y - Position.Y));
 
-                //DiagnosticsHook.DebugMessage(deltaPos.ToString());
-                float angleA = (float)Math.Atan(deltaPos.X/deltaPos.Y);
-
-                //double personAngle = Math.Atan2(deltaPos.Y, deltaPos.X);
-                //double personAngle = Math.Atan(tanAngle);
-                //DiagnosticsHook.DebugMessage("Tan angle = " + tanAngle);
-                //DiagnosticsHook.DebugMessage("Person angle = " + personAngle);
-                //float radianAngle = (float)((Math.PI / 180) * personAngle);
-                DiagnosticsHook.DebugMessage("angle = " + angleA);
-                sprite.Rotation = (float)3.14;
+                float angleA = sprite.Rotation;
+                if (deltaPos.Y >= 0)
+                {
+                    angleA = (float)Math.Atan(deltaPos.X / deltaPos.Y);
+                } else
+                {
+                    angleA = (float)(Math.Atan(deltaPos.X / deltaPos.Y) + Math.PI);
+                }
+                
+                sprite.Rotation = angleA;
                 
 
                 if (health <= 0)
