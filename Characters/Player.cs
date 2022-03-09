@@ -283,15 +283,18 @@ namespace CampusCrawl.Characters
                 var mouseState = Mouse.GetState();
                 Vector2 mousePos = Scene.ToGridLocation(mouseState.Position);
                 Vector2 deltaPos = new Vector2((mousePos.X - Position.X), -(mousePos.Y - Position.Y));
-                //DiagnosticsHook.DebugMessage(deltaPos.ToString());
 
-                double personAngle = Math.Atan2(deltaPos.Y, deltaPos.X);
+                //DiagnosticsHook.DebugMessage(deltaPos.ToString());
+                float angleA = (float)Math.Atan(deltaPos.X/deltaPos.Y);
+
+                //double personAngle = Math.Atan2(deltaPos.Y, deltaPos.X);
                 //double personAngle = Math.Atan(tanAngle);
                 //DiagnosticsHook.DebugMessage("Tan angle = " + tanAngle);
                 //DiagnosticsHook.DebugMessage("Person angle = " + personAngle);
-                float radianAngle = (float)((Math.PI / 180) * personAngle);
-                //DiagnosticsHook.DebugMessage("Radian angle = " + radianAngle);
-                //sprite.Rotation = radianAngle;
+                //float radianAngle = (float)((Math.PI / 180) * personAngle);
+                DiagnosticsHook.DebugMessage("angle = " + angleA);
+                sprite.Rotation = (float)3.14;
+                
 
                 if (health <= 0)
                 {
