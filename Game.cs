@@ -46,9 +46,8 @@ namespace CampusCrawl
             guiImage = new Picture();
             guiImage.Texture = logo;
             guiImage.Anchor = UIAnchor.Top;
-            guiImage.Offset = new Vector2(0, -60);
+            guiImage.Offset = new Vector2(0, 100);
             guiImage.Scale = 0.4f;
-            UI.AddElement(guiImage);
             startButton = new RectangleButton();
             startButton.OnClick += startGame;
             startButton.Anchor = UIAnchor.Center;
@@ -61,6 +60,7 @@ namespace CampusCrawl
             label.Colour = Color.Black;
             startButton.Label = label;
             UI.AddElement(startButton);
+            UI.AddElement(guiImage);
             TileEngine.Instance.SetScene(typeof(Spar));
         }
 
