@@ -139,7 +139,7 @@ namespace CampusCrawl.Characters
         public void makePauseMenu()
         {
             pausePanel = new Panel();
-            pausePanel.Colour = Color.PaleVioletRed;
+            pausePanel.Colour = Color.CornflowerBlue;
             pausePanel.Size = new Vector2(500, 250);
             pausePanel.Anchor = UIAnchor.Center;
             pausePanel.OnClick += restart;
@@ -154,6 +154,7 @@ namespace CampusCrawl.Characters
             restartButton.Anchor = UIAnchor.Center;
             restartButton.BorderColour = Color.Black;
             restartButton.BackgroundColour = Color.Green;
+            restartButton.Offset = new Vector2(0, 50);
             Label label = new Label();
             label.Text = "Restart game";
             label.FontSize = 32;
