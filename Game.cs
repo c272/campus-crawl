@@ -13,6 +13,7 @@ using tileEngine.SDK.Input;
 using tileEngine.SDK.GUI;
 using tileEngine.SDK.GUI.Elements;
 using CampusCrawl.Entities.Weapons;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace CampusCrawl
 {
@@ -20,9 +21,11 @@ namespace CampusCrawl
    {
         private Player mainPlayer;
         private RectangleButton startButton;
+        private Picture guiImage;
         public void startGame(Point location)
         {
             UI.RemoveElement(startButton);
+            UI.RemoveElement(guiImage);
             mainPlayer = new Player();
             var entity = new Entities.Entity("Assets/TestModel.png");
             TileEngine.Instance.SetScene(typeof(AlexandraSquare));
@@ -39,6 +42,12 @@ namespace CampusCrawl
             TileEngine.Instance.MouseInput.AddBinding(MouseInputType.Position, "MousePosition");
             TileEngine.Instance.KeyboardInput.AddAxisBinding(Keys.D, Keys.A, Keys.S, Keys.W, "Movement");
             UI.Initialize("Fonts/MakanHati-vmp94.ttf");
+            Texture2D logo = AssetManager.AttemptLoad<Texture2D>("logo.png");
+            guiImage = new Picture();
+            guiImage.Texture = logo;
+            guiImage.Anchor = UIAnchor.Top;
+           // guiImage.Offset = new Vector2(0, -70);
+            UI.AddElement(guiImage);
             startButton = new RectangleButton();
             startButton.OnClick += startGame;
             startButton.Anchor = UIAnchor.Center;

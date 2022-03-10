@@ -38,6 +38,7 @@ namespace CampusCrawl.Characters
         private Boolean paused = false;
         private Panel pausePanel;
         public Label scoreLabel;
+        //public Timer cooldown;
         public Player()
         {
             playerModelPath = "Assets/TestModel.png";
@@ -48,7 +49,7 @@ namespace CampusCrawl.Characters
                 Scale = new Vector2(1, 1)
             };
             AddComponent(sprite);
-            attackCooldown = new Timer(0.5f);
+            attackCooldown = new Timer(0.1f);
             attackCooldown.OnTick += cooldown;
             attackCooldown.Loop = true;
             speed = 110;
@@ -181,7 +182,7 @@ namespace CampusCrawl.Characters
                     Scale = new Vector2(1, 1),
                     Rotation = sprite.Rotation
                 });
-                weapon.Attack(false,true);
+                weapon.Attack(false, true);
             }
 
             if (mouseState.LeftButton == ButtonState.Released)
@@ -194,6 +195,7 @@ namespace CampusCrawl.Characters
                     Rotation = sprite.Rotation
                 });
             }
+            canAttack = false;
         }
 
         private int rightButtonHeld = 0;
@@ -283,12 +285,12 @@ namespace CampusCrawl.Characters
             base.Update(delta);
             if (!paused)
             {
+                attackCooldown.Update(delta);
                 var time = (float)(delta.ElapsedGameTime.TotalSeconds);
                 var movement = InputHandler.GetEvent("Movement");
                 var mouseState = Mouse.GetState();
                 Vector2 mousePos = Scene.ToGridLocation(mouseState.Position);
                 Vector2 deltaPos = new Vector2((mousePos.X - Position.X), -(mousePos.Y - Position.Y));
-
                 float angleA = sprite.Rotation;
                 if (deltaPos.Y >= 0)
                 {

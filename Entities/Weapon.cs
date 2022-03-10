@@ -183,7 +183,6 @@ namespace CampusCrawl.Entities
                 {
                     if (Math.Abs(enemy.Position.X - character.Position.X) < 40 && Math.Abs(enemy.Position.Y - character.Position.Y) < 40)
                     {
-                        DiagnosticsHook.DebugMessage("a");
                         enemy.onDamage(damage * character.damage, character.attackDirection, (int)(knockback * 1.5));
                         isAttacking = false;
                     }
