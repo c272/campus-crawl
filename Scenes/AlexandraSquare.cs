@@ -54,10 +54,9 @@ namespace CampusCrawl.Scenes
                     player.health = 100;
                 else
                     player.health += 30;
-            spawnEnemy(waveCounter*4, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer,0);
-            spawnEnemy(waveCounter, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer, 1);
-            spawnEnemy(waveCounter, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer, 2);
-            //make it so it spawns different enemy types at higher waves - need different enemy types
+            spawnEnemy(waveCounter *2, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer,0);
+            spawnEnemy((int)waveCounter /2, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer, 1);
+            spawnEnemy((int)waveCounter/3, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer, 2);
         }
 
         public override void Update(GameTime delta)

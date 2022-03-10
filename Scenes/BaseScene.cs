@@ -29,32 +29,35 @@ namespace CampusCrawl.Scenes
 
         public void spawnEnemy(int amount, int[] rangeX, int[] rangeY, int layer,int enemyType)
         {
-            string[] directions = new string[] { "up", "down", "left", "right" };
-            List<Point> spawnableTiles = new List<Point>();
-            for (int x = rangeX[0]; x < rangeX[1]; x++)
+            if (amount != 0)
             {
-                for (int y = rangeY[0]; y < rangeY[1]; y++)
+                string[] directions = new string[] { "up", "down", "left", "right" };
+                List<Point> spawnableTiles = new List<Point>();
+                for (int x = rangeX[0]; x < rangeX[1]; x++)
                 {
-                    if (!Map.Layers.Where(a => a.ID == layer).FirstOrDefault().CollisionHull.ContainsKey(new Point(x, y)))
+                    for (int y = rangeY[0]; y < rangeY[1]; y++)
                     {
-                        spawnableTiles.Add(new Point(x, y));
+                        if (!Map.Layers.Where(a => a.ID == layer).FirstOrDefault().CollisionHull.ContainsKey(new Point(x, y)))
+                        {
+                            spawnableTiles.Add(new Point(x, y));
+                        }
                     }
                 }
-            }
-            Random random = new Random();
-            for (int x = 0; x < amount; x++)
-            {
-                var index = random.Next(spawnableTiles.Count);
-                var enemyPos = spawnableTiles[index];
-                spawnableTiles.RemoveAt(index);
-                var newEnemy = new Enemy(directions[random.Next(directions.Count())], random.Next(30), TileToGridLocation(enemyPos));
-                if (enemyType == 1)
-                    newEnemy = new EnemyTank(directions[random.Next(directions.Count())], random.Next(10), TileToGridLocation(enemyPos));
-                if(enemyType == 2)
-                    newEnemy = new EnemySprint(directions[random.Next(directions.Count())], random.Next(30), TileToGridLocation(enemyPos));
-                TileEngine.Instance.GetScene().AddObject(newEnemy);
-                newEnemy.SetLayer("Objects");
-                newEnemy.CreateAndSetWeapon(new Fists());
+                Random random = new Random();
+                for (int x = 0; x < amount; x++)
+                {
+                    var index = random.Next(spawnableTiles.Count);
+                    var enemyPos = spawnableTiles[index];
+                    spawnableTiles.RemoveAt(index);
+                    var newEnemy = new Enemy(directions[random.Next(directions.Count())], random.Next(30), TileToGridLocation(enemyPos));
+                    if (enemyType == 1)
+                        newEnemy = new EnemyTank(directions[random.Next(directions.Count())], random.Next(10), TileToGridLocation(enemyPos));
+                    if (enemyType == 2)
+                        newEnemy = new EnemySprint(directions[random.Next(directions.Count())], random.Next(30), TileToGridLocation(enemyPos));
+                    TileEngine.Instance.GetScene().AddObject(newEnemy);
+                    newEnemy.SetLayer("Objects");
+                    newEnemy.CreateAndSetWeapon(new Fists());
+                }
             }
         }
 
