@@ -46,13 +46,15 @@ namespace CampusCrawl
             guiImage = new Picture();
             guiImage.Texture = logo;
             guiImage.Anchor = UIAnchor.Top;
-           // guiImage.Offset = new Vector2(0, -70);
+            guiImage.Offset = new Vector2(0, -60);
+            guiImage.Scale = 0.4f;
             UI.AddElement(guiImage);
             startButton = new RectangleButton();
             startButton.OnClick += startGame;
             startButton.Anchor = UIAnchor.Center;
             startButton.BorderColour = Color.Black;
             startButton.BackgroundColour = Color.Green;
+            startButton.Offset = new Vector2(0,80);
             Label label = new Label();
             label.Text = "Start game";
             label.FontSize = 32;
