@@ -22,10 +22,12 @@ namespace CampusCrawl
         private Player mainPlayer;
         private RectangleButton startButton;
         private Picture guiImage;
+        private Label title;
         public void startGame(Point location)
         {
             UI.RemoveElement(startButton);
             UI.RemoveElement(guiImage);
+            UI.RemoveElement(title);
             mainPlayer = new Player();
             var entity = new Entities.Entity("Assets/TestModel.png");
             TileEngine.Instance.SetScene(typeof(AlexandraSquare));
@@ -46,19 +48,25 @@ namespace CampusCrawl
             guiImage = new Picture();
             guiImage.Texture = logo;
             guiImage.Anchor = UIAnchor.Top;
-            guiImage.Offset = new Vector2(0, 100);
+            guiImage.Offset = new Vector2(0, 30);
             guiImage.Scale = 0.4f;
+            title = new Label();
+            title.Text = "CAMPUS CRAWL";
+            title.FontSize = 32;
+            title.Anchor = UIAnchor.Top;
+            title.Offset = new Vector2(0, 160);
             startButton = new RectangleButton();
             startButton.OnClick += startGame;
             startButton.Anchor = UIAnchor.Center;
             startButton.BorderColour = Color.Black;
             startButton.BackgroundColour = Color.Green;
-            startButton.Offset = new Vector2(0,80);
+            //startButton.Offset = new Vector2(0,80);
             Label label = new Label();
             label.Text = "Start game";
             label.FontSize = 32;
             label.Colour = Color.Black;
             startButton.Label = label;
+            UI.AddElement(title);
             UI.AddElement(startButton);
             UI.AddElement(guiImage);
             TileEngine.Instance.SetScene(typeof(Spar));
