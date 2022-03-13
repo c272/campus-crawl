@@ -33,6 +33,7 @@ namespace CampusCrawl.Characters
         private RectangleButton restartButton;
         private bool paused = false;
         private Panel pausePanel;
+        private Picture logo;
         public Label scoreLabel;
         public Player()
         {
@@ -124,6 +125,7 @@ namespace CampusCrawl.Characters
             UI.RemoveElement(restartButton);
             UI.RemoveElement(pausePanel);
             UI.RemoveElement(scoreLabel);
+            UI.RemoveElement(logo);
             score = 0;
             Position = Scene.TileToGridLocation(spawnPoint);
             health = 100;
@@ -139,11 +141,16 @@ namespace CampusCrawl.Characters
             pausePanel.Anchor = UIAnchor.Center;
             pausePanel.OnClick += restart;
             scoreLabel = new Label();
-            scoreLabel.Text = "You have been defeated\nYou scored: " + score.ToString();
+            scoreLabel.Text = "You have been defeated\n    You scored: " + score.ToString();
             scoreLabel.Anchor = UIAnchor.Center;
             scoreLabel.FontSize = 32;
             scoreLabel.Colour = Color.Black;
-            scoreLabel.Offset = new Vector2(0, -70);
+            scoreLabel.Offset = new Vector2(0, -10);
+            logo = new Picture();
+            logo.Texture = AssetManager.AttemptLoad<Texture2D>("logo.png");
+            logo.Anchor = UIAnchor.Top;
+            logo.Offset = new Vector2(0, 90);
+            logo.Scale = 0.3f;
             restartButton = new RectangleButton();
             restartButton.OnClick += restart;
             restartButton.Anchor = UIAnchor.Center;
@@ -157,6 +164,7 @@ namespace CampusCrawl.Characters
             restartButton.Label = label;
             UI.AddElement(pausePanel);
             UI.AddElement(restartButton);
+            UI.AddElement(logo);
             UI.AddElement(scoreLabel);
         }
 
@@ -317,7 +325,7 @@ namespace CampusCrawl.Characters
                 }
 
                 healthBar.Value = health / 100;
-                healthCount.Text = health.ToString() + " / " + 100;
+                healthCount.Text = (int)health + " / " + 100;
                 scoreCount.Text = "Score: " + score.ToString();
                 Scene.LookAt(calculateLookAt());
             }

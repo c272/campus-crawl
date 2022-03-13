@@ -352,7 +352,7 @@ namespace CampusCrawl.Characters
                     float yMovement = -prepareDirection[1];
                     Position = new Vector2(Position.X + xMovement, Position.Y + yMovement);
                     attackDirection = prepareDirection;
-                    ((Fists)weapon).Lunge(0.04f, false);
+                    ((Fists)weapon).Lunge(2f, false);
                 }
             }
         }
