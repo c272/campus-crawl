@@ -54,7 +54,7 @@ namespace CampusCrawl.Characters
             attackCooldown.Loop = true;
             speed = 110;
             health = 100;
-            damage = 5;
+            damage = 8;
             healthBar = new ProgressBar(new Vector2(200, 32));
             healthBar.ForegroundColour = Color.Green;
             healthBar.BackgroundColour = Color.Red;

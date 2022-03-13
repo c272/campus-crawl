@@ -329,7 +329,7 @@ namespace CampusCrawl.Characters
 
         private void attack()
         {
-            if (playerInView(40,true) && player.pushStats.isPushed() == false && player.attacking == false && !attacking)
+            if (playerInView(37,true) && player.pushStats.isPushed() == false && player.attacking == false && !attacking)
             {
                 //attacking = true;
                 if (weapon != null)
