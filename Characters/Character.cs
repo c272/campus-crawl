@@ -1,12 +1,7 @@
 ﻿using CampusCrawl.Entities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using tileEngine.SDK;
 using tileEngine.SDK.Audio;
 using tileEngine.SDK.Components;
@@ -201,17 +196,6 @@ namespace CampusCrawl.Characters
             pushStats.checkPush();
             if (pushStats.isPushed())
             {
-                if (attacking)
-                {
-                    /*
-                    if(!weapon.Attack(true,!isEnemy))
-                    {
-                        DiagnosticsHook.DebugMessage("b");
-                        attacking = false;
-                        pushStats.reset();
-                    }*/
-                }
-
                 pushEffect(time);
             } else
             {
@@ -240,7 +224,6 @@ namespace CampusCrawl.Characters
                 {
                     if (!weapon.checkAttack(new Vector2(Position.X + xPushAmt, Position.Y + yPushAmt),!isEnemy))
                     {
-                        DiagnosticsHook.DebugMessage("d");
                         attacking = false;
                         pushStats.reset();
                     }

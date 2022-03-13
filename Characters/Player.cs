@@ -23,22 +23,17 @@ namespace CampusCrawl.Characters
         private Point spawnPoint = new Point();
         private Timer attackCooldown;
         private bool canAttack = true;
-        private float attackX = 0f;
-        private float attackY = 0f;
         private float[] attackDirection = new float[2];
         public bool attacking = false;
-        private float attackDistance = 0f;
         public bool oneLife = true;
-        MouseInputHandler mouse;
         public ProgressBar healthBar;
         public Label healthCount;
         public float score = 0f;
         public Label scoreCount;
         private RectangleButton restartButton;
-        private Boolean paused = false;
+        private bool paused = false;
         private Panel pausePanel;
         public Label scoreLabel;
-        //public Timer cooldown;
         public Player()
         {
             playerModelPath = "FinalAssets/LancasterGuy.png";
@@ -82,7 +77,6 @@ namespace CampusCrawl.Characters
             };
             spawnPoint = new Point(0,0);
             AddComponent(collider);
-            mouse = new MouseInputHandler();
             attackCooldown.Start();
         }
         private float clamp(float val, float min, float max)

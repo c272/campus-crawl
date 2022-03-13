@@ -331,12 +331,10 @@ namespace CampusCrawl.Characters
         {
             if (playerInView(37,true) && player.pushStats.isPushed() == false && player.attacking == false && !attacking)
             {
-                //attacking = true;
                 if (weapon != null)
                 {
                     attackDirection = playerDirection();
                     weapon.Attack(false, false);
-                    //((Fists)weapon).Lunge(1, false);
                 }
             }
         }
@@ -355,8 +353,6 @@ namespace CampusCrawl.Characters
                     Position = new Vector2(Position.X + xMovement, Position.Y + yMovement);
                     attackDirection = prepareDirection;
                     ((Fists)weapon).Lunge(0.04f, false);
-                    //heavyAttackCooldown.Reset();
-                   
                 }
             }
         }
