@@ -59,7 +59,7 @@ namespace CampusCrawl.Characters
 
         public Enemy(string directionName, float distance, Vector2 location)
         {
-            playerModelPath = "Assets/dave.png";
+            playerModelPath = "FinalAssets/Zombie.png";
             isEnemy = true;
             if (directionName == "up" || directionName == "left")
                 direction = -1;
@@ -374,6 +374,21 @@ namespace CampusCrawl.Characters
                 if (player == null)
                 {
                     player = (Player)Scene.GameObjects.Where(x => x is Player).FirstOrDefault();
+                }
+                if(player!=null)
+                {
+                    Vector2 deltaPos = new Vector2((player.Position.X - Position.X), -(player.Position.Y - Position.Y));
+                    float angleA = sprite.Rotation;
+                    if (deltaPos.Y >= 0)
+                    {
+                        angleA = (float)Math.Atan(deltaPos.X / deltaPos.Y);
+                    }
+                    else
+                    {
+                        angleA = (float)(Math.Atan(deltaPos.X / deltaPos.Y) + Math.PI);
+                    }
+
+                    sprite.Rotation = angleA;
                 }
                 if (!pushStats.isPushed() && attacking)
                 {

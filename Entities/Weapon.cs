@@ -149,7 +149,7 @@ namespace CampusCrawl.Entities
                         currentEnemy.onDamage(damage*character.damage, character.attackDirection, (int)(knockback * 1.5));
                     hit = true;
                 }
-                else if (Math.Abs(enemyPos.X - currentPos.X) < 40 && Math.Abs(enemyPos.Y - currentPos.Y) < 40)
+                else if (Math.Abs(enemyPos.X - currentPos.X) < 35 && Math.Abs(enemyPos.Y - currentPos.Y) < 35)
                 {
                     currentEnemy.onDamage(damage, character.attackDirection, (int)(knockback * 1.5));
                     hit = true;
@@ -181,7 +181,7 @@ namespace CampusCrawl.Entities
                 Point enemyTile = Scene.GridToTileLocation(enemy.Position);
                 if (lungeAttack)
                 {
-                    if (Math.Abs(enemy.Position.X - character.Position.X) < 40 && Math.Abs(enemy.Position.Y - character.Position.Y) < 40)
+                    if (Math.Abs(enemy.Position.X - character.Position.X) < 35 && Math.Abs(enemy.Position.Y - character.Position.Y) < 35)
                     {
                         enemy.onDamage(damage * character.damage, character.attackDirection, (int)(knockback * 1.5));
                         isAttacking = false;

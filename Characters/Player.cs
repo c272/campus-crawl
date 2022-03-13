@@ -41,7 +41,7 @@ namespace CampusCrawl.Characters
         //public Timer cooldown;
         public Player()
         {
-            playerModelPath = "Assets/TestModel.png";
+            playerModelPath = "FinalAssets/LancasterGuy.png";
             sprite = new SpriteComponent()
             {
                 Texture = AssetManager.AttemptLoad<Texture2D>(playerModelPath),
