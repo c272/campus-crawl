@@ -7,6 +7,7 @@ using tileEngine.SDK.Audio;
 using tileEngine.SDK.Components;
 using tileEngine.SDK.Diagnostics;
 using tileEngine.SDK.Input;
+using tileEngine.SDK.Utility;
 
 namespace CampusCrawl.Characters
 {
@@ -77,10 +78,14 @@ namespace CampusCrawl.Characters
         protected Weapon weapon;
         protected Entity doNotPickUp;
         public string playerModelPath;
+        protected bool soundPlaying = false;
+        protected Timer soundDone;
 
         public Character()
         {
-
+            soundDone = new Timer(0.25f);
+            soundDone.OnTick += soundCooldown;
+            soundDone.Loop = false;
         }
 
         public void UpdateSprite(SpriteComponent _sprite, BoxColliderComponent boxCollider = null)
@@ -104,6 +109,7 @@ namespace CampusCrawl.Characters
         {
             base.Initialize();
             attacking = false;
+            soundDone.Start();
             damageSound = TileEngine.Instance.Sound.LoadSound("Sound/testSound.mp3");
         }
 
@@ -154,12 +160,21 @@ namespace CampusCrawl.Characters
             pushStats.setPush(x, y);
         }
 
+        public void soundCooldown()
+        {
+            soundPlaying = false;
+        }
+
         public void onDamage(float damage, float[] attackDirection, int pushAmt)
         {
             health -= damage;
             PushSelf(-(int)(attackDirection[0] * pushAmt), -(int)(attackDirection[1] * pushAmt));
-
-            TileEngine.Instance.Sound.PlaySound(damageSound);
+            if (!soundPlaying)
+            {
+                TileEngine.Instance.Sound.PlaySound(damageSound);
+                soundDone.Start();
+                soundPlaying = true;
+            }
         }
 
         public void scanAndPickUpEntities()
@@ -187,9 +202,9 @@ namespace CampusCrawl.Characters
             base.Update(delta);
             var time = (float)(delta.ElapsedGameTime.TotalSeconds);
             var movement = InputHandler.GetEvent("Movement");
-
+            soundDone.Update(delta);
             // Code to pick up entities
-            if(weapon == null)
+            if (weapon == null)
                 scanAndPickUpEntities();
 
             // Code to move/push
