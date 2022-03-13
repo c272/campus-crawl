@@ -19,6 +19,7 @@ namespace CampusCrawl.Scenes
         Player player;
         Boolean timed = false;
         Label waveInfo;
+        int timeStart = -1;
         public override void Initialize()
         {
             base.Initialize();
@@ -34,21 +35,27 @@ namespace CampusCrawl.Scenes
             waveInfo.FontSize = 32;
             waveInfo.Colour = Color.Black;
             waveInfo.Anchor = UIAnchor.Right | UIAnchor.Top;
+            timeStart = (int)(DateTime.UtcNow - new DateTime(1000, 1, 1)).TotalSeconds;
             UI.AddElement(waveInfo);
             //...
         }
 
         public void spawnReset()
         {
+            timeStart = (int)(DateTime.UtcNow - new DateTime(1000, 1, 1)).TotalSeconds;
             if (player != null && timed)
             {
                 player.respawn();
-                spawnEnemy(1, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer, 0);
             }
         }
 
         public void waveReset()
         {
+            int timeElapsed = timeStart - (int)(DateTime.UtcNow - new DateTime(1000, 1, 1)).TotalSeconds;
+            if(((waveCounter * 30) - timeElapsed) * 5 > 0 && waveCounter != 1)
+            {
+                player.score += ((waveCounter * 60) - timeElapsed) *5;
+            }
             if (player.health < 100)
                 if (player.health > 70)
                     player.health = 100;
@@ -57,6 +64,7 @@ namespace CampusCrawl.Scenes
             spawnEnemy(waveCounter *2, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer,0);
             spawnEnemy((int)waveCounter /2, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer, 1);
             spawnEnemy((int)waveCounter/3, new int[] { -10, 69 }, new int[] { -8, 6 }, player.Layer, 2);
+            timeStart = (int)(DateTime.UtcNow - new DateTime(1000, 1, 1)).TotalSeconds;
         }
 
         public override void Update(GameTime delta)
