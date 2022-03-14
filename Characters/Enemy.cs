@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using tileEngine.SDK;
+using tileEngine.SDK.Audio;
 using tileEngine.SDK.Components;
 using tileEngine.SDK.Diagnostics;
 using tileEngine.SDK.Input;
@@ -362,6 +363,7 @@ namespace CampusCrawl.Characters
             base.Update(delta);
             if (health <= 0)
             {
+                TileEngine.Instance.Sound.PlaySound(TileEngine.Instance.Sound.LoadSound("Sound/enemyDeath.wav"));
                 Scene = null;
                 player.score += scoreValue;
             }

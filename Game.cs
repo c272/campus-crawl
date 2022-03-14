@@ -25,6 +25,9 @@ namespace CampusCrawl
         private Label title;
         public void startGame(Point location)
         {
+            SoundInstance soundInstance = TileEngine.Instance.Sound.PlaySound(TileEngine.Instance.Sound.LoadSound("Sound/click.mp3"));
+            soundInstance.Volume = 0.3f;
+            soundInstance.Looping = false;
             UI.RemoveElement(startButton);
             UI.RemoveElement(guiImage);
             UI.RemoveElement(title);

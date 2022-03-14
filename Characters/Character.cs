@@ -110,7 +110,7 @@ namespace CampusCrawl.Characters
             base.Initialize();
             attacking = false;
             soundDone.Start();
-            damageSound = TileEngine.Instance.Sound.LoadSound("Sound/testSound.mp3");
+            damageSound = TileEngine.Instance.Sound.LoadSound("Sound/hit.wav");
         }
 
         public void CreateAndSetWeapon(Weapon weapon)
@@ -171,7 +171,9 @@ namespace CampusCrawl.Characters
             PushSelf(-(int)(attackDirection[0] * pushAmt), -(int)(attackDirection[1] * pushAmt));
             if (!soundPlaying)
             {
-                TileEngine.Instance.Sound.PlaySound(damageSound);
+                SoundInstance soundInstance = TileEngine.Instance.Sound.PlaySound(damageSound);
+                soundInstance.Volume = 0.3f;
+                soundInstance.Looping = false;
                 soundDone.Start();
                 soundPlaying = true;
             }

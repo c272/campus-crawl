@@ -51,6 +51,8 @@ namespace CampusCrawl.Scenes
 
         public void waveReset()
         {
+            if(waveCounter != 1)
+                TileEngine.Instance.Sound.PlaySound(TileEngine.Instance.Sound.LoadSound("Sound/waveDone.mp3"));
             int timeElapsed = timeStart - (int)(DateTime.UtcNow - new DateTime(1000, 1, 1)).TotalSeconds;
             if(((waveCounter * 30) - timeElapsed) * 5 > 0 && waveCounter != 1)
             {

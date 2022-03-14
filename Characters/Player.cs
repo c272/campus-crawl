@@ -15,6 +15,7 @@ using CampusCrawl.Entities.Weapons;
 using tileEngine.SDK.Utility;
 using tileEngine.SDK.GUI.Elements;
 using tileEngine.SDK.GUI;
+using tileEngine.SDK.Audio;
 
 namespace CampusCrawl.Characters
 {
@@ -119,6 +120,9 @@ namespace CampusCrawl.Characters
 
         public void restart(Point location)
         {
+            SoundInstance soundInstance = TileEngine.Instance.Sound.PlaySound(TileEngine.Instance.Sound.LoadSound("Sound/click.mp3"));
+            soundInstance.Volume = 0.3f;
+            soundInstance.Looping = false;
             var scene = (Scenes.BaseScene)Scene;
             scene.paused = false;
             paused = false;
@@ -135,6 +139,10 @@ namespace CampusCrawl.Characters
 
         public void makePauseMenu()
         {
+            SoundInstance soundInstance = TileEngine.Instance.Sound.PlaySound(TileEngine.Instance.Sound.LoadSound("Sound/playerDeath.wav"));
+            soundInstance.Volume = 0.3f;
+            soundInstance.Looping = false;
+            TileEngine.Instance.Sound.PlaySound(damageSound);
             pausePanel = new Panel();
             pausePanel.Colour = Color.CornflowerBlue;
             pausePanel.Size = new Vector2(500, 250);
