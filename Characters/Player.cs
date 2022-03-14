@@ -148,8 +148,8 @@ namespace CampusCrawl.Characters
             scoreLabel.Offset = new Vector2(0, -10);
             logo = new Picture();
             logo.Texture = AssetManager.AttemptLoad<Texture2D>("logo.png");
-            logo.Anchor = UIAnchor.Top;
-            logo.Offset = new Vector2(0, 90);
+            logo.Anchor = UIAnchor.Center;
+            logo.Offset = new Vector2(0, -83);
             logo.Scale = 0.3f;
             restartButton = new RectangleButton();
             restartButton.OnClick += restart;
