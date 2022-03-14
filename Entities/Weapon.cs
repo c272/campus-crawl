@@ -125,7 +125,7 @@ namespace CampusCrawl.Entities
             }
         }
 
-        public bool checkAttack(Vector2 newPos,bool player)
+        public bool CheckAttack(Vector2 newPos,bool player)
         {
 
             Point currentTile = Scene.GridToTileLocation(newPos);
@@ -144,14 +144,14 @@ namespace CampusCrawl.Entities
                 if ((currentTile.X - enemyTile.X <= character.attackDirection[0] && currentTile.Y - enemyTile.Y <= character.attackDirection[1]) || enemyTile == currentTile)
                 {
                     if(player)
-                        currentEnemy.onDamage(damage, character.attackDirection, (int)(knockback * 1.5));
+                        currentEnemy.OnDamage(damage, character.attackDirection, (int)(knockback * 1.5));
                     else
-                        currentEnemy.onDamage(damage*character.damage, character.attackDirection, (int)(knockback * 1.5));
+                        currentEnemy.OnDamage(damage*character.damage, character.attackDirection, (int)(knockback * 1.5));
                     hit = true;
                 }
                 else if (Math.Abs(enemyPos.X - currentPos.X) < 40 && Math.Abs(enemyPos.Y - currentPos.Y) < 40)
                 {
-                    currentEnemy.onDamage(damage, character.attackDirection, (int)(knockback * 1.5));
+                    currentEnemy.OnDamage(damage, character.attackDirection, (int)(knockback * 1.5));
                     hit = true;
                 }
             }
@@ -183,7 +183,7 @@ namespace CampusCrawl.Entities
                 {
                     if (Math.Abs(enemy.Position.X - character.Position.X) < 40 && Math.Abs(enemy.Position.Y - character.Position.Y) < 40)
                     {
-                        enemy.onDamage(damage * character.damage, character.attackDirection, (int)(knockback * 1.5));
+                        enemy.OnDamage(damage * character.damage, character.attackDirection, (int)(knockback * 1.5));
                         isAttacking = false;
                     }
                 }
@@ -191,7 +191,7 @@ namespace CampusCrawl.Entities
                 {
                     if (canAttack(enemyTile, currentTile, character.attackDirection))
                     {
-                        enemy.onDamage(damage * character.damage, character.attackDirection, knockback);
+                        enemy.OnDamage(damage * character.damage, character.attackDirection, knockback);
                         isAttacking = false;
                     }
                 }

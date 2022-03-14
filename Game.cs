@@ -23,7 +23,7 @@ namespace CampusCrawl
         private RectangleButton startButton;
         private Picture guiImage;
         private Label title;
-        public void startGame(Point location)
+        public void StartGame(Point location)
         {
             SoundInstance soundInstance = TileEngine.Instance.Sound.PlaySound(TileEngine.Instance.Sound.LoadSound("Sound/click.mp3"));
             soundInstance.Volume = 0.3f;
@@ -43,7 +43,6 @@ namespace CampusCrawl
         }
         public override void Initialize()
         {
-            //Create movement bindings.
             TileEngine.Instance.MouseInput.AddBinding(MouseInputType.Position, "MousePosition");
             TileEngine.Instance.KeyboardInput.AddAxisBinding(Keys.D, Keys.A, Keys.S, Keys.W, "Movement");
             UI.Initialize("Fonts/MakanHati-vmp94.ttf");
@@ -59,11 +58,10 @@ namespace CampusCrawl
             title.Anchor = UIAnchor.Top;
             title.Offset = new Vector2(0, 220);
             startButton = new RectangleButton();
-            startButton.OnClick += startGame;
+            startButton.OnClick += StartGame;
             startButton.Anchor = UIAnchor.Center;
             startButton.BorderColour = Color.Black;
             startButton.BackgroundColour = Color.Green;
-            //startButton.Offset = new Vector2(0,80);
             Label label = new Label();
             label.Text = "Start game";
             label.FontSize = 32;

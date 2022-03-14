@@ -277,11 +277,11 @@ namespace CampusCrawl.Characters
             }
         }
 
-        private bool playerInView(int distance, bool flag)
+        private bool playerInView(int distance, bool checkPixels)
         {
             Point playerTile = Scene.GridToTileLocation(player.Position);
             Point currentTile = Scene.GridToTileLocation(Position);
-            if (flag)
+            if (checkPixels)
             {
                 playerTile = new Point((int)player.Position.X, (int)player.Position.Y);
                 currentTile = new Point((int)Position.X, (int)Position.Y);
@@ -304,7 +304,7 @@ namespace CampusCrawl.Characters
             }
         }
 
-        public float[] playerDirection()
+        public float[] PlayerDirection()
         {
             var direction = new float[2] { 0, 0 };
             var playerTile = Scene.GridToTileLocation(player.Position);
@@ -330,11 +330,11 @@ namespace CampusCrawl.Characters
 
         private void attack()
         {
-            if (playerInView(37,true) && player.pushStats.isPushed() == false && player.attacking == false && !attacking)
+            if (playerInView(37,true) && player.pushStats.IsPushed() == false && player.Attacking == false && !attacking)
             {
                 if (weapon != null)
                 {
-                    attackDirection = playerDirection();
+                    attackDirection = PlayerDirection();
                     weapon.Attack(false, false);
                 }
             }
@@ -343,12 +343,12 @@ namespace CampusCrawl.Characters
         private void heavyAttack()
         {
            
-            if (playerInView(120, true) && player.pushStats.isPushed() == false && player.attacking == false)
+            if (playerInView(120, true) && player.pushStats.IsPushed() == false && player.Attacking == false)
             {
                 if (weapon != null)
                 {
                     attacking = true;
-                    float[] prepareDirection = playerDirection();
+                    float[] prepareDirection = PlayerDirection();
                     float xMovement = -prepareDirection[0];
                     float yMovement = -prepareDirection[1];
                     Position = new Vector2(Position.X + xMovement, Position.Y + yMovement);
@@ -365,7 +365,7 @@ namespace CampusCrawl.Characters
             {
                 TileEngine.Instance.Sound.PlaySound(TileEngine.Instance.Sound.LoadSound("Sound/enemyDeath.wav"));
                 Scene = null;
-                player.score += scoreValue;
+                player.Score += scoreValue;
             }
             else
             {
@@ -388,7 +388,7 @@ namespace CampusCrawl.Characters
 
                     sprite.Rotation = angleA;
                 }
-                if (!pushStats.isPushed() && attacking)
+                if (!pushStats.IsPushed() && attacking)
                 {
                     attacking = false;
                 }

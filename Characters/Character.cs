@@ -24,9 +24,9 @@ namespace CampusCrawl.Characters
         public int Y { get; set; }
         public int currX { get; set; }
         public int currY { get; set; }
-        public bool isPushed() { return !(X == 0 && Y == 0); }
-        public void reset() { X = 0; Y = 0; currX = 1; currY = 1; }
-        public void setPush(int x, int y)
+        public bool IsPushed() { return !(X == 0 && Y == 0); }
+        public void Reset() { X = 0; Y = 0; currX = 1; currY = 1; }
+        public void SetPush(int x, int y)
         {
             X = x;
             Y = y;
@@ -40,15 +40,15 @@ namespace CampusCrawl.Characters
             }
         }
 
-        public void doneXPush()
+        public void DoneXPush()
         {
             if (currX < 0) { currX--; } else { currX++; }
         }
-        public void doneYPush()
+        public void DoneYPush()
         {
             if (currY < 0) { currY--; } else { currY++; }
         }
-        public void checkPush()
+        public void CheckPush()
         {
             if (Math.Abs(currX) == Math.Abs(X))
             {
@@ -84,7 +84,7 @@ namespace CampusCrawl.Characters
         public Character()
         {
             soundDone = new Timer(0.25f);
-            soundDone.OnTick += soundCooldown;
+            soundDone.OnTick += SoundCooldown;
             soundDone.Loop = false;
         }
 
@@ -136,36 +136,28 @@ namespace CampusCrawl.Characters
             var mouseTile = Scene.GridToTileLocation(gridPos);
             var currentTile = Scene.GridToTileLocation(Position);
             if (currentTile.X - mouseTile.X > 0)
-            {
                 direction[0] = 1;
-            }
             if (currentTile.X - mouseTile.X < 0)
-            {
                 direction[0] = -1;
-            }
             if (currentTile.Y - mouseTile.Y > 0)
-            {
                 direction[1] = 1;
-            }
             if (currentTile.Y - mouseTile.Y < 0)
-            {
                 direction[1] = -1;
-            }
             return direction;
         }
 
 
         public void PushSelf(int x, int y)
         {
-            pushStats.setPush(x, y);
+            pushStats.SetPush(x, y);
         }
 
-        public void soundCooldown()
+        public void SoundCooldown()
         {
             soundPlaying = false;
         }
 
-        public void onDamage(float damage, float[] attackDirection, int pushAmt)
+        public void OnDamage(float damage, float[] attackDirection, int pushAmt)
         {
             health -= damage;
             PushSelf(-(int)(attackDirection[0] * pushAmt), -(int)(attackDirection[1] * pushAmt));
@@ -179,7 +171,7 @@ namespace CampusCrawl.Characters
             }
         }
 
-        public void scanAndPickUpEntities()
+        public void ScanAndPickUpEntities()
         {
             var entities = Scene.GameObjects.Where(x => x is Entity).ToList();
             foreach (Entity entity in entities)
@@ -207,42 +199,42 @@ namespace CampusCrawl.Characters
             soundDone.Update(delta);
             // Code to pick up entities
             if (weapon == null)
-                scanAndPickUpEntities();
+                ScanAndPickUpEntities();
 
             // Code to move/push
-            pushStats.checkPush();
-            if (pushStats.isPushed())
+            pushStats.CheckPush();
+            if (pushStats.IsPushed())
             {
-                pushEffect(time);
+                PushEffect(time);
             } else
             {
                 attacking = false;
             }
         }
 
-        public void pushEffect(float time)
+        public void PushEffect(float time)
         {
-            pushStats.checkPush();
-            if (pushStats.isPushed() == true)
+            pushStats.CheckPush();
+            if (pushStats.IsPushed() == true)
             {
                 float xPushAmt = 0;
                 float yPushAmt = 0;
                 if (pushStats.X != 0)
                 {
                     xPushAmt = pushStats.currX * time * speed;
-                    pushStats.doneXPush();
+                    pushStats.DoneXPush();
                 }
                 if (pushStats.Y != 0)
                 {
                     yPushAmt = pushStats.currY * time * speed;
-                    pushStats.doneYPush();
+                    pushStats.DoneYPush();
                 }
                 if (attacking)
                 {
-                    if (!weapon.checkAttack(new Vector2(Position.X + xPushAmt, Position.Y + yPushAmt),!isEnemy))
+                    if (!weapon.CheckAttack(new Vector2(Position.X + xPushAmt, Position.Y + yPushAmt),!isEnemy))
                     {
                         attacking = false;
-                        pushStats.reset();
+                        pushStats.Reset();
                     }
                 }
                 Position = new Vector2(Position.X + xPushAmt, Position.Y + yPushAmt);

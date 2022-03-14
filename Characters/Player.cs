@@ -25,17 +25,21 @@ namespace CampusCrawl.Characters
         private Timer attackCooldown;
         private bool canAttack = true;
         private float[] attackDirection = new float[2];
-        public bool attacking = false;
-        public bool oneLife = true;
-        public ProgressBar healthBar;
-        public Label healthCount;
-        public float score = 0f;
-        public Label scoreCount;
+        public bool Attacking = false;
+        public bool OneLife = true;
+        public ProgressBar HealthBar;
+        public Label HealthCount;
+        public float Score = 0f;
+        public Label ScoreCount;
         private RectangleButton restartButton;
         private bool paused = false;
         private Panel pausePanel;
         private Picture logo;
-        public Label scoreLabel;
+        public Label ScoreLabel;
+        private int rightButtonHeld = 0;
+        private bool rightButtonReleased = false;
+        private bool isLunging = false;
+
         public Player()
         {
             playerModelPath = "FinalAssets/LancasterGuy.png";
@@ -47,26 +51,26 @@ namespace CampusCrawl.Characters
             };
             AddComponent(sprite);
             attackCooldown = new Timer(0.1f);
-            attackCooldown.OnTick += cooldown;
+            attackCooldown.OnTick += Cooldown;
             attackCooldown.Loop = true;
             speed = 110;
             health = 100;
             damage = 8;
-            healthBar = new ProgressBar(new Vector2(200, 32));
-            healthBar.ForegroundColour = Color.Green;
-            healthBar.BackgroundColour = Color.Red;
-            healthBar.Value = 1;
-            healthCount = new Label();
-            healthCount.FontSize = 32;
-            healthCount.Text = health.ToString() + " / " + 100;
-            scoreCount = new Label();
-            scoreCount.FontSize = 32;
-            scoreCount.Colour = Color.Black;
-            scoreCount.Text = "Score: " + score.ToString();
-            scoreCount.Anchor = UIAnchor.Top | UIAnchor.Center;
-            UI.AddElement(healthBar);
-            UI.AddElement(healthCount);
-            UI.AddElement(scoreCount);
+            HealthBar = new ProgressBar(new Vector2(200, 32));
+            HealthBar.ForegroundColour = Color.Green;
+            HealthBar.BackgroundColour = Color.Red;
+            HealthBar.Value = 1;
+            HealthCount = new Label();
+            HealthCount.FontSize = 32;
+            HealthCount.Text = health.ToString() + " / " + 100;
+            ScoreCount = new Label();
+            ScoreCount.FontSize = 32;
+            ScoreCount.Colour = Color.Black;
+            ScoreCount.Text = "Score: " + Score.ToString();
+            ScoreCount.Anchor = UIAnchor.Top | UIAnchor.Center;
+            UI.AddElement(HealthBar);
+            UI.AddElement(HealthCount);
+            UI.AddElement(ScoreCount);
         }
 
         public override void Initialize()
@@ -88,15 +92,15 @@ namespace CampusCrawl.Characters
             else return val;
         }
 
-        public void spawnRandomWeapon()
+        public void SpawnRandomWeapon()
         {
             Fists e = new Fists();
             e.SetCharacter(this);
         }
 
-        public void respawn()
+        public void Respawn()
         {
-            if(oneLife)
+            if(OneLife)
             {
                 var enemies = Scene.GameObjects.Where(x => x is Enemy);
                 foreach(var enemy in enemies.ToList())
@@ -107,18 +111,18 @@ namespace CampusCrawl.Characters
                 scene.waveCounter = 0;
                 scene.paused = true;
                 paused = true;
-                makePauseMenu();
+                MakePauseMenu();
             }
             else
             {
                 Position = Scene.TileToGridLocation(spawnPoint);
                 health = 100;
-                attacking = false;
-                pushStats.reset();
+                Attacking = false;
+                pushStats.Reset();
             }
         }
 
-        public void restart(Point location)
+        public void Restart(Point location)
         {
             SoundInstance soundInstance = TileEngine.Instance.Sound.PlaySound(TileEngine.Instance.Sound.LoadSound("Sound/click.mp3"));
             soundInstance.Volume = 0.3f;
@@ -128,16 +132,16 @@ namespace CampusCrawl.Characters
             paused = false;
             UI.RemoveElement(restartButton);
             UI.RemoveElement(pausePanel);
-            UI.RemoveElement(scoreLabel);
+            UI.RemoveElement(ScoreLabel);
             UI.RemoveElement(logo);
-            score = 0;
+            Score = 0;
             Position = Scene.TileToGridLocation(spawnPoint);
             health = 100;
-            attacking = false;
-            pushStats.reset();
+            Attacking = false;
+            pushStats.Reset();
         }
 
-        public void makePauseMenu()
+        public void MakePauseMenu()
         {
             SoundInstance soundInstance = TileEngine.Instance.Sound.PlaySound(TileEngine.Instance.Sound.LoadSound("Sound/playerDeath.wav"));
             soundInstance.Volume = 0.3f;
@@ -147,20 +151,20 @@ namespace CampusCrawl.Characters
             pausePanel.Colour = Color.CornflowerBlue;
             pausePanel.Size = new Vector2(500, 250);
             pausePanel.Anchor = UIAnchor.Center;
-            pausePanel.OnClick += restart;
-            scoreLabel = new Label();
-            scoreLabel.Text = "You have been defeated\n    You scored: " + score.ToString();
-            scoreLabel.Anchor = UIAnchor.Center;
-            scoreLabel.FontSize = 32;
-            scoreLabel.Colour = Color.Black;
-            scoreLabel.Offset = new Vector2(0, -10);
+            pausePanel.OnClick += Restart;
+            ScoreLabel = new Label();
+            ScoreLabel.Text = "You have been defeated\n    You scored: " + Score.ToString();
+            ScoreLabel.Anchor = UIAnchor.Center;
+            ScoreLabel.FontSize = 32;
+            ScoreLabel.Colour = Color.Black;
+            ScoreLabel.Offset = new Vector2(0, -10);
             logo = new Picture();
             logo.Texture = AssetManager.AttemptLoad<Texture2D>("logo.png");
             logo.Anchor = UIAnchor.Center;
             logo.Offset = new Vector2(0, -83);
             logo.Scale = 0.3f;
             restartButton = new RectangleButton();
-            restartButton.OnClick += restart;
+            restartButton.OnClick += Restart;
             restartButton.Anchor = UIAnchor.Center;
             restartButton.BorderColour = Color.Black;
             restartButton.BackgroundColour = Color.Green;
@@ -173,10 +177,10 @@ namespace CampusCrawl.Characters
             UI.AddElement(pausePanel);
             UI.AddElement(restartButton);
             UI.AddElement(logo);
-            UI.AddElement(scoreLabel);
+            UI.AddElement(ScoreLabel);
         }
 
-        public void cooldown()
+        public void Cooldown()
         {
             canAttack = true;
         }
@@ -208,9 +212,6 @@ namespace CampusCrawl.Characters
             canAttack = false;
         }
 
-        private int rightButtonHeld = 0;
-        private bool rightButtonReleased = false;
-        private bool isLunging = false;
         private void handleSecondaryAttack(MouseState mouseState)
         {
             if (rightButtonHeld > 0 && mouseState.RightButton == ButtonState.Released)
@@ -241,7 +242,7 @@ namespace CampusCrawl.Characters
                         Scale = new Vector2(1, 1),
                         Rotation = sprite.Rotation
                     });
-                    attacking = true;
+                    Attacking = true;
                     ((Fists)weapon).Lunge(clamp(rightButtonHeld / 10, 0, 20),true);
                     isLunging = false;
                 }
@@ -272,13 +273,9 @@ namespace CampusCrawl.Characters
             Vector2 positionNew = Position;
             positionNew.Y = Scene.TileToGridLocation(new Point(pos.X, -1)).Y;
             if (pos.X < 0)
-            {
                 positionNew.X = Scene.TileToGridLocation(new Point(0, pos.Y)).X;
-            }
-            if (pos.X > 59)
-            {
+            if (pos.X > 59) //59 is at 750 resolution the max to the right you can go before seeing blue space
                 positionNew.X = Scene.TileToGridLocation(new Point(60, pos.Y)).X;
-            }
             
             return positionNew;
         }
@@ -296,38 +293,29 @@ namespace CampusCrawl.Characters
                 Vector2 deltaPos = new Vector2((mousePos.X - Position.X), -(mousePos.Y - Position.Y));
                 float angleA = sprite.Rotation;
                 if (deltaPos.Y >= 0)
-                {
                     angleA = (float)Math.Atan(deltaPos.X / deltaPos.Y);
-                } else
-                {
+                else
                     angleA = (float)(Math.Atan(deltaPos.X / deltaPos.Y) + Math.PI);
-                }
                 
                 sprite.Rotation = angleA;
                 
 
                 if (health <= 0)
-                {
-                    respawn();
-                }
+                    Respawn();
                 else
-                {
                     handleAttack(mouseState);
-                }
-                if (!pushStats.isPushed() && attacking)
-                {
-                    attacking = false;
-                }
+                if (!pushStats.IsPushed() && Attacking)
+                    Attacking = false;
 
-                if (!pushStats.isPushed() && !isLunging)
+                if (!pushStats.IsPushed() && !isLunging)
                 {
                     Position = new Vector2(Position.X + (movement.Value.X * time * speed), Position.Y + (movement.Value.Y * time * speed));
                     doNotPickUp = null;
                 }
 
-                healthBar.Value = health / 100;
-                healthCount.Text = (int)health + " / " + 100;
-                scoreCount.Text = "Score: " + score.ToString();
+                HealthBar.Value = health / 100;
+                HealthCount.Text = (int)health + " / " + 100;
+                ScoreCount.Text = "Score: " + Score.ToString();
                 Scene.LookAt(calculateLookAt());
             }
         }

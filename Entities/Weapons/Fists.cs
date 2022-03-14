@@ -19,12 +19,6 @@ namespace CampusCrawl.Entities.Weapons
             damage = 1;
             range = 1;
             knockback = 10;
-            // assetPath = the model that is shown on the ground to be picked up
-            // restingModel = the model of the player with 
-
-            // Assets/TestModel.png = playerModel
-            // Assets/TestModel_Fists_Resting.png = restingModel
-            // Assets/TestModel_Fists_Attacked.png = attackedModel
         }
         
         public void Lunge(float multiplier,bool player)

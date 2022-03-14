@@ -45,7 +45,7 @@ namespace CampusCrawl.Scenes
             timeStart = (int)(DateTime.UtcNow - new DateTime(1000, 1, 1)).TotalSeconds;
             if (player != null && timed)
             {
-                player.respawn();
+                player.Respawn();
             }
         }
 
@@ -56,7 +56,7 @@ namespace CampusCrawl.Scenes
             int timeElapsed = timeStart - (int)(DateTime.UtcNow - new DateTime(1000, 1, 1)).TotalSeconds;
             if(((waveCounter * 30) - timeElapsed) * 5 > 0 && waveCounter != 1)
             {
-                player.score += ((waveCounter * 60) - timeElapsed) *5;
+                player.Score += ((waveCounter * 60) - timeElapsed) *5;
             }
             if (player.health < 100)
                 if (player.health > 70)
