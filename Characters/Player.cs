@@ -274,7 +274,7 @@ namespace CampusCrawl.Characters
             positionNew.Y = Scene.TileToGridLocation(new Point(pos.X, -1)).Y;
             if (pos.X < 0)
                 positionNew.X = Scene.TileToGridLocation(new Point(0, pos.Y)).X;
-            if (pos.X > 59) //59 is at 750 resolution the max to the right you can go before seeing blue space
+            if (pos.X > 59) //59 is at 750 resolution the max to the tile to the right you can go before seeing blue space
                 positionNew.X = Scene.TileToGridLocation(new Point(60, pos.Y)).X;
             
             return positionNew;

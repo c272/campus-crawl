@@ -23,6 +23,7 @@ namespace CampusCrawl
         private RectangleButton startButton;
         private Picture guiImage;
         private Label title;
+        private Label description;
         public void StartGame(Point location)
         {
             SoundInstance soundInstance = TileEngine.Instance.Sound.PlaySound(TileEngine.Instance.Sound.LoadSound("Sound/click.mp3"));
@@ -31,6 +32,7 @@ namespace CampusCrawl
             UI.RemoveElement(startButton);
             UI.RemoveElement(guiImage);
             UI.RemoveElement(title);
+            UI.RemoveElement(description);
             mainPlayer = new Player();
             var entity = new Entities.Entity("Assets/TestModel.png");
             TileEngine.Instance.SetScene(typeof(AlexandraSquare));
@@ -65,11 +67,18 @@ namespace CampusCrawl
             Label label = new Label();
             label.Text = "Start game";
             label.FontSize = 32;
-            label.Colour = Color.Black;
+            label.Colour = Color.White;
+            description = new Label();
+            description.Text = "How to play:\n- Try to get the highest score\n   - Defeat enemies to increase your score (different types give different amounts)\n   - Complete waves quickly to increase your score\n- Upon the start of a wave enemies will spawn\n- Defeat all enemies to progress to the next wave\n- As the wave your on increases the amount of enemies and the type of enemies change";
+            description.FontSize = 26;
+            description.Colour = Color.White;
+            description.Anchor = UIAnchor.Center;
+            description.Offset = new Vector2(0, 150);
             startButton.Label = label;
             UI.AddElement(title);
             UI.AddElement(startButton);
             UI.AddElement(guiImage);
+            UI.AddElement(description);
             TileEngine.Instance.SetScene(typeof(Spar));
         }
 
