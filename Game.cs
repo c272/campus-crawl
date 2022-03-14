@@ -48,13 +48,13 @@ namespace CampusCrawl
             guiImage = new Picture();
             guiImage.Texture = logo;
             guiImage.Anchor = UIAnchor.Top;
-            guiImage.Offset = new Vector2(0, 30);
+            guiImage.Offset = new Vector2(0, 100);
             guiImage.Scale = 0.4f;
             title = new Label();
             title.Text = "CAMPUS CRAWL";
             title.FontSize = 32;
             title.Anchor = UIAnchor.Top;
-            title.Offset = new Vector2(0, 160);
+            title.Offset = new Vector2(0, 220);
             startButton = new RectangleButton();
             startButton.OnClick += startGame;
             startButton.Anchor = UIAnchor.Center;

@@ -262,14 +262,7 @@ namespace CampusCrawl.Characters
         {
             Point pos = Scene.GridToTileLocation(Position);
             Vector2 positionNew = Position;
-            if(positionNew.Y > 1)
-            {
-                positionNew.Y = Scene.TileToGridLocation(new Point(pos.X, 1)).Y;
-            }
-            if (positionNew.Y < -2)
-            {
-                positionNew.Y = Scene.TileToGridLocation(new Point(pos.X, -2)).Y;
-            }
+            positionNew.Y = Scene.TileToGridLocation(new Point(pos.X, -1)).Y;
             if (pos.X < 0)
             {
                 positionNew.X = Scene.TileToGridLocation(new Point(0, pos.Y)).X;
