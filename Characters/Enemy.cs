@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CampusCrawl.Entities;
+using CampusCrawl.Entities.Weapons;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -7,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using tileEngine.SDK;
+using tileEngine.SDK.Audio;
 using tileEngine.SDK.Components;
 using tileEngine.SDK.Diagnostics;
 using tileEngine.SDK.Input;
@@ -14,23 +17,21 @@ using tileEngine.SDK.Utility;
 
 namespace CampusCrawl.Characters
 {
-    public class Enemy : GameObject
+    public class Enemy : Character
     {
-        private BoxColliderComponent collider;
-        private SpriteComponent sprite;
-        private float speed = 100;
-        private float direction = -1;
-        private float patrolDistance = 5;
-        private float currentDistance = 0;
-        private string directionName;
-        private Dictionary<Point, Node> map;
-        private List<Node> openNodes;
-        private List<Node> closedNodes;
-        private List<Node> completedPath;
-        private bool followingPath = false;
-        private Timer timerPath;
-
-
+        protected float direction = -1;
+        protected float patrolDistance = 5;
+        protected float currentDistance = 0;
+        protected string directionName;
+        protected Dictionary<Point, Node> map;
+        protected List<Node> openNodes;
+        protected List<Node> closedNodes;
+        protected List<Node> completedPath;
+        protected Timer timerPath;
+        protected Timer attackCooldown;
+        protected Timer heavyAttackCooldown;
+        protected Player player;
+        protected int scoreValue = 100;
         public struct Node
         {
             public Node(int distanceFromStart, int distanceFromEnd, int target, Point relativeLocation, List<Node> path)
@@ -57,25 +58,37 @@ namespace CampusCrawl.Characters
             public Point RelativeLocation { get; }
         }
 
-        public Enemy(string directionName, float distance)
+        public Enemy(string directionName, float distance, Vector2 location)
         {
+            playerModelPath = "FinalAssets/Zombie.png";
+            isEnemy = true;
             if (directionName == "up" || directionName == "left")
                 direction = -1;
             if (directionName == "down" || directionName == "right")
                 direction = 1;
             this.directionName = directionName;
             patrolDistance = distance;
-            Position = new Vector2(320, 0);
+            Position = location;
             sprite = new SpriteComponent()
             {
-                Texture = AssetManager.AttemptLoad<Texture2D>(-1280955819),
-                Position = new Vector2(0, 0),
+                Texture = AssetManager.AttemptLoad<Texture2D>(playerModelPath),
+                Position = new Vector2(-16, -16),
                 Scale = new Vector2(1, 1)
             };
             AddComponent(sprite);
+            heavyAttackCooldown = new Timer(5f);
+            heavyAttackCooldown.OnTick += heavyAttack;
+            heavyAttackCooldown.Loop = true;
+            attackCooldown = new Timer(0.5f);
+            attackCooldown.OnTick += attack;
+            attackCooldown.Loop = true;
             timerPath = new Timer(0.5f);
             timerPath.OnTick += createPath;
             timerPath.Loop = true;
+            speed = 100;
+            health = 100;
+            damage = 10;
+
         }
 
         public override void Initialize()
@@ -84,10 +97,12 @@ namespace CampusCrawl.Characters
             collider = new BoxColliderComponent()
             {
                 Size = new Vector2(Scene.Map.TileTextureSize - 1, Scene.Map.TileTextureSize - 1),
-                Location = new Vector2(0, 0)
+                Location = new Vector2(-15.5f,-15.5f)
             };
             AddComponent(collider);
             timerPath.Start();
+            attackCooldown.Start();
+            heavyAttackCooldown.Start();
         }
         /*
          * Checks if a tile has collision at set point
@@ -262,86 +277,182 @@ namespace CampusCrawl.Characters
             }
         }
 
-        private bool playerInView()
+        private bool playerInView(int distance, bool checkPixels)
         {
-            var player = Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
-            var playerTile = Scene.GridToTileLocation(player.Position);
-            var currentTile = Scene.GridToTileLocation(Position);
-            if(Math.Abs(playerTile.X - currentTile.X) < 10 && Math.Abs(playerTile.Y - currentTile.Y) < 10)
+            Point playerTile = Scene.GridToTileLocation(player.Position);
+            Point currentTile = Scene.GridToTileLocation(Position);
+            if (checkPixels)
             {
-                return true; 
+                playerTile = new Point((int)player.Position.X, (int)player.Position.Y);
+                currentTile = new Point((int)Position.X, (int)Position.Y);
+            }
+            if (Math.Abs(playerTile.X - currentTile.X) < distance && Math.Abs(playerTile.Y - currentTile.Y) < distance)
+            {
+                return true;
             }
             return false;
         }
 
         private void createPath()
         {
-            var player = Scene.GameObjects.Where(x => x is Character).FirstOrDefault();
             var playerTile = Scene.GridToTileLocation(player.Position);
             var enemyTile = Scene.GridToTileLocation(Position);
-            if (playerInView())
+            if (playerInView(15,false))
             {
                 newPath(playerTile, enemyTile);
                 followingPath = true;
             }
         }
 
+        public float[] PlayerDirection()
+        {
+            var direction = new float[2] { 0, 0 };
+            var playerTile = Scene.GridToTileLocation(player.Position);
+            var currentTile = Scene.GridToTileLocation(Position);
+            if (currentTile.X - playerTile.X > 0)
+            {
+                direction[0] = 1;
+            }
+            if (currentTile.X - playerTile.X < 0)
+            {
+                direction[0] = -1;
+            }
+            if (currentTile.Y - playerTile.Y > 0)
+            {
+                direction[1] = 1;
+            }
+            if (currentTile.Y - playerTile.Y < 0)
+            {
+                direction[1] = -1;
+            }
+            return direction;
+        }
+
+        private void attack()
+        {
+            if (playerInView(37,true) && player.pushStats.IsPushed() == false && player.Attacking == false && !attacking)
+            {
+                if (weapon != null)
+                {
+                    attackDirection = PlayerDirection();
+                    weapon.Attack(false, false);
+                }
+            }
+        }
+
+        private void heavyAttack()
+        {
+           
+            if (playerInView(120, true) && player.pushStats.IsPushed() == false && player.Attacking == false)
+            {
+                if (weapon != null)
+                {
+                    attacking = true;
+                    float[] prepareDirection = PlayerDirection();
+                    float xMovement = -prepareDirection[0];
+                    float yMovement = -prepareDirection[1];
+                    Position = new Vector2(Position.X + xMovement, Position.Y + yMovement);
+                    attackDirection = prepareDirection;
+                    ((Fists)weapon).Lunge(2f, false);
+                }
+            }
+        }
+
         public override void Update(GameTime delta)
         {
             base.Update(delta);
-            timerPath.Update(delta);
-            var time = (float)(delta.ElapsedGameTime.TotalSeconds);
-            var newPos = newPosition(time);
-            if (!followingPath)
+            if (health <= 0)
             {
-                if (!playerInView())
-                {
-                    if (Scene.GridToTileLocation(newPos) != Scene.GridToTileLocation(Position))
-                    {
-                        currentDistance++;
-                        if (!checkPosition(Scene.GridToTileLocation(newPos)))
-                        {
-                            direction = -direction;
-                            currentDistance = 0;
-                        }
-                    }
-                    if (currentDistance == patrolDistance)
-                    {
-                        direction = -direction;
-                        currentDistance = 0;
-                    }
-                    Position = newPosition(time);
-                }
+                TileEngine.Instance.Sound.PlaySound(TileEngine.Instance.Sound.LoadSound("Sound/enemyDeath.wav"));
+                Scene = null;
+                player.Score += scoreValue;
             }
             else
             {
-                Point current = Scene.GridToTileLocation(Position);
-                Point target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
-                int xValue = 0;
-                int yValue = 0;
-                if (current.Equals(target))
+                if (player == null)
                 {
-                    if(completedPath.Count == 1)
+                    player = (Player)Scene.GameObjects.Where(x => x is Player).FirstOrDefault();
+                }
+                if(player!=null)
+                {
+                    Vector2 deltaPos = new Vector2((player.Position.X - Position.X), -(player.Position.Y - Position.Y));
+                    float angleA = sprite.Rotation;
+                    if (deltaPos.Y >= 0)
                     {
-                        followingPath = false;
+                        angleA = (float)Math.Atan(deltaPos.X / deltaPos.Y);
                     }
                     else
                     {
-                        completedPath.RemoveAt(0);
-                        target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
+                        angleA = (float)(Math.Atan(deltaPos.X / deltaPos.Y) + Math.PI);
                     }
+
+                    sprite.Rotation = angleA;
                 }
-                if (followingPath)
+                if (!pushStats.IsPushed() && attacking)
                 {
-                    if (current.X > target.X)
-                        xValue = -1;
-                    if (current.X < target.X)
-                        xValue = 1;
-                    if (current.Y > target.Y)
-                        yValue = -1;
-                    if (current.Y < target.Y)
-                        yValue = 1;
-                    Position = new Vector2(Position.X + (xValue * time * speed), Position.Y + (yValue * time * speed));
+                    attacking = false;
+                }
+                heavyAttackCooldown.Update(delta);
+                timerPath.Update(delta);
+                attackCooldown.Update(delta);
+                var time = (float)(delta.ElapsedGameTime.TotalSeconds);
+                var newPos = newPosition(time);
+                if (!attacking)
+                {
+                    if (!followingPath)
+                    {
+                        if (!playerInView(15, false))
+                        {
+                            if (Scene.GridToTileLocation(newPos) != Scene.GridToTileLocation(Position))
+                            {
+                                currentDistance++;
+                                if (!checkPosition(Scene.GridToTileLocation(newPos)))
+                                {
+                                    direction = -direction;
+                                    currentDistance = 0;
+                                }
+                            }
+                            if (currentDistance == patrolDistance)
+                            {
+                                direction = -direction;
+                                currentDistance = 0;
+                            }
+                            Position = newPosition(time);
+                            doNotPickUp = null;
+                        }
+                    }
+                    else
+                    {
+                        Point current = Scene.GridToTileLocation(Position);
+                        Point target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
+                        int xValue = 0;
+                        int yValue = 0;
+                        if (current.Equals(target))
+                        {
+                            if (completedPath.Count == 1)
+                            {
+                                followingPath = false;
+                            }
+                            else
+                            {
+                                completedPath.RemoveAt(0);
+                                target = new Point(completedPath[0].RelativeLocation.X, completedPath[0].RelativeLocation.Y);
+                            }
+                        }
+                        if (followingPath)
+                        {
+                            if (current.X > target.X)
+                                xValue = -1;
+                            if (current.X < target.X)
+                                xValue = 1;
+                            if (current.Y > target.Y)
+                                yValue = -1;
+                            if (current.Y < target.Y)
+                                yValue = 1;
+                            Position = new Vector2(Position.X + (xValue * time * speed), Position.Y + (yValue * time * speed));
+                            doNotPickUp = null;
+                        }
+                    }
                 }
             }
         }
