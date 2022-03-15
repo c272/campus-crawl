@@ -6,9 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using tileEngine.SDK;
+using tileEngine.SDK.Attributes;
 using tileEngine.SDK.Audio;
+using tileEngine.SDK.Diagnostics;
 using tileEngine.SDK.GUI;
 using tileEngine.SDK.GUI.Elements;
+using tileEngine.SDK.Map;
 using tileEngine.SDK.Utility;
 
 namespace CampusCrawl.Scenes
@@ -89,6 +92,17 @@ namespace CampusCrawl.Scenes
                 spawnCooldown.Update(delta);
             }
             //...
+        }
+
+        [EventFunction("EnteredOrExitedShelteredArea")]
+        public void EnteredOrExitedShelteredArea(TileEventData e)
+        {
+            DiagnosticsHook.DebugMessage("A");
+            Map.Layers.Where(x =>
+            {
+                DiagnosticsHook.DebugMessage(" -> " + x);
+                return true;
+            });
         }
     }
 }
