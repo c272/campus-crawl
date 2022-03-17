@@ -15,50 +15,41 @@ namespace CampusCrawl.Characters
     {
         public Push(int x, int y)
         {
-            X = x;
-            Y = y;
-            currX = 1;
-            currY = 1;
+            Value = new Vector2(x, y);
+            Current = Vector2.One;
         }
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int currX { get; set; }
-        public int currY { get; set; }
-        public bool IsPushed() { return !(X == 0 && Y == 0); }
-        public void Reset() { X = 0; Y = 0; currX = 1; currY = 1; }
-        public void SetPush(int x, int y)
-        {
-            X = x;
-            Y = y;
-            if (x < 0)
-            {
-                currX = -1;
-            }
-            if (y < 0)
-            {
-                currY = -1;
-            }
+        public Vector2 Value { get; set; }
+        public Vector2 Current { get; set; }
+        public bool IsPushed => !(Value.X == 0 && Value.Y == 0);
+
+        public void Reset() 
+        { 
+            Value = Vector2.Zero;
+            Current = Vector2.One;
         }
 
-        public void DoneXPush()
+        public void SetPush(int x, int y)
         {
-            if (currX < 0) { currX--; } else { currX++; }
+            Value = new Vector2(x, y);
+            if (x < 0)
+                Current = new Vector2(-1, Current.Y);
+            if (y < 0)
+                Current = new Vector2(Current.X, -1);
         }
-        public void DoneYPush()
-        {
-            if (currY < 0) { currY--; } else { currY++; }
-        }
+
+        public void DoneXPush() => Current = new Vector2(Current.X + Current.X < 0 ? -1 : 1, Current.Y);
+        public void DoneYPush() => Current = new Vector2(Current.X, Current.Y + Current.Y < 0 ? -1 : 1);
         public void CheckPush()
         {
-            if (Math.Abs(currX) == Math.Abs(X))
+            if (Math.Abs(Current.X) == Math.Abs(Value.X))
             {
-                currX = 1;
-                X = 0;
+                Current = new Vector2(1, Current.Y);
+                Value = new Vector2(0, Value.Y);
             }
-            if (Math.Abs(currY) == Math.Abs(Y))
+            if (Math.Abs(Current.Y) == Math.Abs(Value.Y))
             {
-                currY = 1;
-                Y = 0;
+                Current = new Vector2(Current.X, 1);
+                Value = new Vector2(Value.X, 0); ;
             }
         }
     }
@@ -206,7 +197,7 @@ namespace CampusCrawl.Characters
 
             // Code to move/push
             pushStats.CheckPush();
-            if (pushStats.IsPushed())
+            if (pushStats.IsPushed)
             {
                 PushEffect(time);
             } else
@@ -218,18 +209,18 @@ namespace CampusCrawl.Characters
         public void PushEffect(float time)
         {
             pushStats.CheckPush();
-            if (pushStats.IsPushed() == true)
+            if (pushStats.IsPushed)
             {
                 float xPushAmt = 0;
                 float yPushAmt = 0;
-                if (pushStats.X != 0)
+                if (pushStats.Value.X != 0)
                 {
-                    xPushAmt = pushStats.currX * time * speed;
+                    xPushAmt = pushStats.Current.X * time * speed;
                     pushStats.DoneXPush();
                 }
-                if (pushStats.Y != 0)
+                if (pushStats.Value.Y != 0)
                 {
-                    yPushAmt = pushStats.currY * time * speed;
+                    yPushAmt = pushStats.Current.Y * time * speed;
                     pushStats.DoneYPush();
                 }
                 if (attacking)
