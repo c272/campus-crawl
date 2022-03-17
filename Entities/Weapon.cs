@@ -60,7 +60,8 @@ namespace CampusCrawl.Entities
             {
                 Texture = AssetManager.AttemptLoad<Texture2D>(playerModel),
                 Position = new Vector2(-16, -16),
-                Scale = new Vector2(1, 1)
+                Scale = new Vector2(1, 1),
+                Rotation = character.sprite.Rotation
             });
 
             Position = character.Position;

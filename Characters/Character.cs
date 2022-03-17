@@ -66,7 +66,7 @@ namespace CampusCrawl.Characters
     {
         protected bool followingPath = false;
         protected BoxColliderComponent collider;
-        protected SpriteComponent sprite;
+        public SpriteComponent sprite;
         protected float speed;
         public float health;
         public bool attacking;
@@ -124,8 +124,12 @@ namespace CampusCrawl.Characters
 
         public void DropCurrentWeapon()
         {
-            doNotPickUp = weapon;
-            weapon.PutDown();
+            if (weapon != null)
+            {
+                doNotPickUp = weapon;
+                weapon.PutDown();
+                weapon = null;
+            }
         }
 
         public float[] mouseDirection()
@@ -178,10 +182,10 @@ namespace CampusCrawl.Characters
             {
                 if (Scene.GridToTileLocation(entity.Position) == Scene.GridToTileLocation(this.Position) && entity != doNotPickUp)
                 {
+                    //UNCOMMENT
                     // This means, we have an entity that we can pick up.
                     entity.PickedUp();
                     entity.Initialise(Scene, Layer);
-
                     if (entity is Weapon)
                     {
                         weapon = (Weapon)entity;

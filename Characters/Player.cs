@@ -50,6 +50,7 @@ namespace CampusCrawl.Characters
                 Scale = new Vector2(1, 1)
             };
             AddComponent(sprite);
+            TriggersEvents = true;
             attackCooldown = new Timer(0.1f);
             attackCooldown.OnTick += Cooldown;
             attackCooldown.Loop = true;
@@ -280,6 +281,14 @@ namespace CampusCrawl.Characters
             return positionNew;
         }
 
+        public void ListenForDropWeapon()
+        {
+            if (InputHandler.HasEvent("DropWeapon"))
+            {
+                DropCurrentWeapon();
+            }
+        }
+
         public override void Update(GameTime delta)
         {
             base.Update(delta);
@@ -298,6 +307,8 @@ namespace CampusCrawl.Characters
                     angleA = (float)(Math.Atan(deltaPos.X / deltaPos.Y) + Math.PI);
                 
                 sprite.Rotation = angleA;
+
+                ListenForDropWeapon();
                 
 
                 if (health <= 0)

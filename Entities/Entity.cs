@@ -14,7 +14,6 @@ namespace CampusCrawl.Entities
 {
     public class Entity : GameObject
     {
-        private BoxColliderComponent collider;
         private SpriteComponent sprite;
         private string assetPath;
 
@@ -43,13 +42,11 @@ namespace CampusCrawl.Entities
         public virtual void PickedUp()
         {
             RemoveComponent(sprite);
-            RemoveComponent(collider);
         }
 
         public virtual void PutDown()
         {
-            AddComponent(sprite);
-            AddComponent(collider);
+            AddComponent(sprite);            
         }
 
         public void Spawn(Vector2 playerPosition)

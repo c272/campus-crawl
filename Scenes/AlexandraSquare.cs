@@ -94,15 +94,24 @@ namespace CampusCrawl.Scenes
             //...
         }
 
-        [EventFunction("EnteredOrExitedShelteredArea")]
-        public void EnteredOrExitedShelteredArea(TileEventData e)
+        [EventFunction("OnShelteredArea")]
+        public void OnShelteredArea(TileEventData e)
         {
-            DiagnosticsHook.DebugMessage("A");
-            Map.Layers.Where(x =>
+            TileLayer roofLayer = Map.Layers.Where(x => x.Name == "Roof").FirstOrDefault();
+            if (roofLayer != null)
             {
-                DiagnosticsHook.DebugMessage(" -> " + x);
-                return true;
-            });
+                roofLayer.Opacity = (float)0.5;
+            }   
+        }
+
+        [EventFunction("ExitedShelteredArea")]
+        public void ExitedShelteredArea(TileEventData e)
+        {
+            TileLayer roofLayer = Map.Layers.Where(x => x.Name == "Roof").FirstOrDefault();
+            if (roofLayer != null)
+            {
+                roofLayer.Opacity = 1;
+            }
         }
     }
 }

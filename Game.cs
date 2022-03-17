@@ -46,6 +46,7 @@ namespace CampusCrawl
         public override void Initialize()
         {
             TileEngine.Instance.MouseInput.AddBinding(MouseInputType.Position, "MousePosition");
+            TileEngine.Instance.KeyboardInput.AddBinding(Keys.F, "DropWeapon");
             TileEngine.Instance.KeyboardInput.AddAxisBinding(Keys.D, Keys.A, Keys.S, Keys.W, "Movement");
             UI.Initialize("Fonts/MakanHati-vmp94.ttf");
             Texture2D logo = AssetManager.AttemptLoad<Texture2D>("logo.png");
