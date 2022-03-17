@@ -42,6 +42,7 @@ namespace CampusCrawl
             mainPlayer.SetLayer("Objects");
             BaseScene scene = (BaseScene)TileEngine.Instance.GetScene();
             mainPlayer.CreateAndSetWeapon(new Fists());
+            mainPlayer.SpawnRandomKnife();
         }
         public override void Initialize()
         {

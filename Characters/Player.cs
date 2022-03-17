@@ -93,10 +93,11 @@ namespace CampusCrawl.Characters
             else return val;
         }
 
-        public void SpawnRandomWeapon()
+        public void SpawnRandomKnife()
         {
-            Fists e = new Fists();
-            e.SetCharacter(this);
+            Knife k = new Knife();
+            k.Initialise(Scene, Layer);
+            k.Spawn(Position);
         }
 
         public void Respawn()

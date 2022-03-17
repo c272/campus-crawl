@@ -182,15 +182,14 @@ namespace CampusCrawl.Characters
             {
                 if (Scene.GridToTileLocation(entity.Position) == Scene.GridToTileLocation(this.Position) && entity != doNotPickUp)
                 {
-                    //UNCOMMENT
                     // This means, we have an entity that we can pick up.
-                    entity.PickedUp();
                     entity.Initialise(Scene, Layer);
                     if (entity is Weapon)
                     {
                         weapon = (Weapon)entity;
                         weapon.SetCharacter(this);
                     }
+                    entity.PickedUp();
                 }
             }
         }
