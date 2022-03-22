@@ -43,9 +43,8 @@ namespace CampusCrawl.Characters
         public Player()
         {
             playerModelPath = "FinalAssets/LancasterGuy.png";
-            sprite = new SpriteComponent()
+            sprite = new SpriteComponent(AssetManager.AttemptLoad<Texture2D>(playerModelPath))
             {
-                Texture = AssetManager.AttemptLoad<Texture2D>(playerModelPath),
                 Position = new Vector2(-16, -16),
                 Scale = new Vector2(1, 1)
             };
@@ -124,7 +123,7 @@ namespace CampusCrawl.Characters
             }
         }
 
-        public void Restart(Point location)
+        public void Restart(UIElement e, Point location)
         {
             SoundInstance soundInstance = TileEngine.Instance.Sound.PlaySound(TileEngine.Instance.Sound.LoadSound("Sound/click.mp3"));
             soundInstance.Volume = 0.3f;
@@ -191,9 +190,8 @@ namespace CampusCrawl.Characters
         {
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
-                UpdateSprite(new SpriteComponent
+                UpdateSprite(new SpriteComponent(AssetManager.AttemptLoad<Texture2D>(weapon.attackedModel))
                 {
-                    Texture = AssetManager.AttemptLoad<Texture2D>(weapon.attackedModel),
                     Position = new Vector2(-16, -16),
                     Scale = new Vector2(1, 1),
                     Rotation = sprite.Rotation
@@ -203,9 +201,8 @@ namespace CampusCrawl.Characters
 
             if (mouseState.LeftButton == ButtonState.Released)
             {
-                UpdateSprite(new SpriteComponent
+                UpdateSprite(new SpriteComponent(AssetManager.AttemptLoad<Texture2D>(weapon.restingModel))
                 {
-                    Texture = AssetManager.AttemptLoad<Texture2D>(weapon.restingModel),
                     Position = new Vector2(-16, -16),
                     Scale = new Vector2(1, 1),
                     Rotation = sprite.Rotation
@@ -237,9 +234,8 @@ namespace CampusCrawl.Characters
             {
                 if (weapon is Fists)
                 {
-                    UpdateSprite(new SpriteComponent
+                    UpdateSprite(new SpriteComponent(AssetManager.AttemptLoad<Texture2D>(weapon.attackedModel))
                     {
-                        Texture = AssetManager.AttemptLoad<Texture2D>(weapon.attackedModel),
                         Position = new Vector2(-16, -16),
                         Scale = new Vector2(1, 1),
                         Rotation = sprite.Rotation
@@ -250,9 +246,8 @@ namespace CampusCrawl.Characters
                 }
                 rightButtonHeld = 0;
                 rightButtonReleased = false;
-                UpdateSprite(new SpriteComponent
+                UpdateSprite(new SpriteComponent(AssetManager.AttemptLoad<Texture2D>(weapon.restingModel))
                 {
-                    Texture = AssetManager.AttemptLoad<Texture2D>(weapon.restingModel),
                     Position = new Vector2(-16, -16),
                     Scale = new Vector2(1, 1),
                     Rotation = sprite.Rotation

@@ -19,9 +19,8 @@ namespace CampusCrawl.Entities
 
         public Entity(string assetPath)
         {
-            sprite = new SpriteComponent()
+            sprite = new SpriteComponent(AssetManager.AttemptLoad<Texture2D>(assetPath))
             {
-                Texture = AssetManager.AttemptLoad<Texture2D>(assetPath),
                 Position = new Vector2(0, 0),
                 Scale = new Vector2(1, 1)
             };

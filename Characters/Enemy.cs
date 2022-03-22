@@ -69,9 +69,8 @@ namespace CampusCrawl.Characters
             this.directionName = directionName;
             patrolDistance = distance;
             Position = location;
-            sprite = new SpriteComponent()
+            sprite = new SpriteComponent(AssetManager.AttemptLoad<Texture2D>(playerModelPath))
             {
-                Texture = AssetManager.AttemptLoad<Texture2D>(playerModelPath),
                 Position = new Vector2(-16, -16),
                 Scale = new Vector2(1, 1)
             };

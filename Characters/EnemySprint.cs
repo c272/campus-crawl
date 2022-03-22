@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using tileEngine.SDK;
+using tileEngine.SDK.Components;
 
 namespace CampusCrawl.Characters
 {
@@ -14,7 +15,13 @@ namespace CampusCrawl.Characters
         public EnemySprint(string directionName, float distance, Vector2 location) : base(directionName, distance, location)
         {
             playerModelPath = "FinalAssets/UclanGuy.png";
-            sprite.Texture = AssetManager.AttemptLoad<Texture2D>(playerModelPath);
+            sprite = new SpriteComponent(AssetManager.AttemptLoad<Texture2D>(playerModelPath))
+            {
+                Position = sprite.Position,
+                Rotation = sprite.Rotation,
+                Origin = sprite.Origin,
+                Scale = sprite.Scale
+            };
             speed = 150;
             damage = 7;
             scoreValue = 200;

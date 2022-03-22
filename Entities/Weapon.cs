@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using tileEngine.SDK;
+using tileEngine.SDK.Components;
 using tileEngine.SDK.Diagnostics;
 using tileEngine.SDK.Input;
 
@@ -46,9 +47,8 @@ namespace CampusCrawl.Entities
         {
             base.PickedUp();
 
-            character.UpdateSprite(new tileEngine.SDK.Components.SpriteComponent
+            character.UpdateSprite(new SpriteComponent(AssetManager.AttemptLoad<Texture2D>(restingModel))
             {
-                Texture = AssetManager.AttemptLoad<Texture2D>(restingModel),
                 Position = new Vector2(-16, -16),
                 Scale = new Vector2(1, 1)
             });
@@ -56,9 +56,8 @@ namespace CampusCrawl.Entities
 
         public override void PutDown()
         {
-            character.UpdateSprite(new tileEngine.SDK.Components.SpriteComponent
+            character.UpdateSprite(new SpriteComponent(AssetManager.AttemptLoad<Texture2D>(playerModel))
             {
-                Texture = AssetManager.AttemptLoad<Texture2D>(playerModel),
                 Position = new Vector2(-16, -16),
                 Scale = new Vector2(1, 1),
                 Rotation = character.sprite.Rotation

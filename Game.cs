@@ -24,7 +24,7 @@ namespace CampusCrawl
         private Picture guiImage;
         private Label title;
         private Label description;
-        public void StartGame(Point location)
+        public void StartGame(UIElement e, Point location)
         {
             SoundInstance soundInstance = TileEngine.Instance.Sound.PlaySound(TileEngine.Instance.Sound.LoadSound("Sound/click.mp3"));
             soundInstance.Volume = 0.3f;
