@@ -31,3 +31,8 @@ The following are the C# style guidelines for code contributed to this repositor
      doMethod();
   ```
 - Indents are done with tabs.
+
+
+## Demo of the game in action
+
+[![Campus Crawl Demo](https://img.youtube.com/vi/29R-4SPj_A8/0.jpg)](https://www.youtube.com/watch?v=29R-4SPj_A8)
